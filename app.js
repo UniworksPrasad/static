@@ -85,6 +85,14 @@ ProjectPlan.belongsTo(Project);
 Project.belongsToMany(MiniCategory, { through: Project_MiniCategory, as: 'projectminicategories', foreignKey: "projectId" });
 MiniCategory.belongsToMany(Project, { through: Project_MiniCategory, as: 'minicategoryprojects', foreignKey: "minicategoryId" });
 
+//Project.belongsTo(Category, { as: 'category' });
+Category.hasOne(Project);
+Project.belongsTo(Category);
+
+SubCategory.hasOne(Project);
+Project.belongsTo(SubCategory);
+//Project.belongsTo(SubCategory, { as: 'subcategory' });
+
 Project.belongsToMany(User, { through: Project_User, as: 'users', foreignKey: "projectId" });
 User.belongsToMany(Project, { through: Project_User, as: 'projects', foreignKey: "userId" });
 

@@ -172,4 +172,22 @@ exports.createArea = function(req, res){
         res.send(result);
     })
   }
+
+  exports.getSiteRequest = function(req, res){
+    const createUser = userService.getSiteRequest(req.params, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+  }
+
+  exports.getNotifications = function(req, res){
+    const createUser = userService.getNotifications(req.params, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+  }
   //All indedendent data tables

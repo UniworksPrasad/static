@@ -8,6 +8,7 @@ const Project = connection.define('Project', {
         allowNull: false,
         primaryKey: true
     },
+    bookingId: Sequelize.STRING,
     description: Sequelize.STRING,
     startDate: Sequelize.DATEONLY,
     endDate: Sequelize.DATEONLY,
