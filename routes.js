@@ -26,4 +26,10 @@ router.post('/projectplan', userController.createProjectPlan);
 router.post('/projectareaplan', userController.createProjectAreaPlan);
 router.post('/milestone', userController.createMilestone);
 
+//router.get('/siteRequest/:projectId', userController.siteRequest);
+//router.get('/getSupervisors/:vendorId', userController.getSupervisors);
+///siteRequest/:projectId
+router.get('/siteRequest/:projectId', userController.getSiteRequest);
+router.get('/notifications/:userId', userController.getNotifications);
+
 module.exports = router;

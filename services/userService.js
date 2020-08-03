@@ -13,6 +13,7 @@ const MiniCategory = require('../models/miniCategory');
 const ProjectPlan = require('../models/projectPlan');
 const Milestone = require('../models/milestone');
 const ProjectAreaPlan = require('../models/projectAreaPlan');
+const Vendor_Supervisor = require('../models/vendor_supervisor');
 
 exports.createUser = function(body, callback){
   Admin.create({
@@ -260,6 +261,7 @@ exports.addCategory = (body, callback) => {
 
   exports.createProject = function(body, callback){
     Project.create({
+      bookingId: body.bookingId,
       description: body.description,
       startDate: body.startDate,
       endDate: body.endDate,
@@ -273,7 +275,9 @@ exports.addCategory = (body, callback) => {
       skilled: body.skilled,
       semiSkilled: body.semiSkilled,
       unSkilled: body.unSkilled,
-      status: body.status
+      status: body.status,
+      CategoryId: body.CategoryId,
+      SubCategoryId: body.SubCategoryId,
     }).then(result =>{
             callback(null, result);
         }).catch(err => {
@@ -337,5 +341,92 @@ exports.addCategory = (body, callback) => {
         }).catch(err => {
         callback(err);
     })
+  }
+
+  exports.getSiteRequest = function(params, callback){
+    let site = class site {
+      constructor(project, plans) {
+          this.project = project;
+          this.plans = plans;
+      }
+    };
+    Project.findByPk(params.projectId,{
+        include: [
+          {
+            model: Category
+          },{
+              model: SubCategory,
+              include: [{
+                model: Tool,
+                as: "tools"
+              }],
+          }
+        ],
+      })
+      .then((project) => {
+        ProjectPlan.findAll({
+          where : {
+          ProjectId: params.projectId
+        }
+      },{
+          attributes: ['id', 'planUrl']
+        }).then(plans => {
+          callback(new site(project, plans));
+        }).catch(err => {
+          callback(err);
+        });
+      })
+      .catch((err) => {
+        console.log(">> Error while retrieving Tags: ", err);
+        callback(err);
+      });
+  }
+
+  exports.getNotifications = function(params, callback){
+    var users = [];
+    class notification {
+      constructor(projects, users) {
+          this.projects = projects;
+          this.users = users;
+      }
+    };
+    User.findByPk(params.userId,{
+        attributes: ['zip']
+      })
+      .then((output) => {
+        console.log(output.zip);
+        Project.findAll({
+          where : {
+          zip: output.zip
+        }
+      }).then(projects => {
+        Vendor_Supervisor.findAll({where : {
+          vendorId: params.userId,
+          status: "P"
+        }}).then(supervisors =>{
+          var len = supervisors.length;
+          var i;
+          for(i = 0; i < len; i++){
+            const supervisorNumber = supervisors[i].supervisorId;
+            users.push(supervisorNumber);
+          }
+          User.findAll({where : {
+            id: users
+          }}).then(result => {
+            callback(null, new notification(projects, result));
+          }).catch(err => {
+            callback(err);
+          });
+        }).catch(err => {
+          callback(err);
+        });
+      }).catch(err => {
+          callback(err);
+        });
+      })
+      .catch((err) => {
+        console.log(">> Error while retrieving Tags: ", err);
+        callback(err);
+      });
   }
   //All indedendent data tables

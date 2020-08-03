@@ -14,3 +14,7 @@ const Vendor_Supervisor = connection.define('Vendor_Supervisor', {
 });
 
 module.exports = Vendor_Supervisor;
+
+//P - PENDING
+//A - APPROOVED
+//R - REJECTED

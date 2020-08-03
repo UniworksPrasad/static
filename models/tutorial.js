@@ -11,6 +11,7 @@ const Tutorial = connection.define('Tutorial', {
     topicName: Sequelize.STRING,
     videoLink: Sequelize.STRING,
     description: Sequelize.TEXT,
+    thumbnail: Sequelize.STRING
 },{
     timestamps: false
 });
