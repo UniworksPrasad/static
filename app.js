@@ -114,11 +114,11 @@ ProjectAreaIssueComment.belongsTo(ProjectAreaIssue);
 User.hasMany(ProjectAreaIssueComment, {as: "projectareacomments"});
 ProjectAreaIssueComment.belongsTo(User);
 
-// connection.sync().then(result=>{
-//     console.log("Database synched successfully!!!");
-// }).catch(err=>{
-//     console.log(err);
-// });
+connection.sync().then(result=>{
+    console.log("Database synched successfully!!!");
+}).catch(err=>{
+    console.log(err);
+});
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
