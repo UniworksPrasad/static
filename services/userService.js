@@ -385,11 +385,16 @@ exports.addCategory = (body, callback) => {
   exports.getNotifications = function(params, callback){
     var users = [];
     class notification {
-      constructor(projects, users) {
+      constructor(projects, supervisors) {
           this.projects = projects;
-          this.users = users;
+          this.supervisors = supervisors;
       }
     };
+    Vendor_Supervisor.findAll({
+      where: {
+        vendorId: params.userId
+      }
+    }).then().catch();
     User.findByPk(params.userId,{
         attributes: ['zip']
       })
