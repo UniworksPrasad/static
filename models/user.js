@@ -9,10 +9,20 @@ const User = connection.define('User', {
         primaryKey: true
     },
     userName: Sequelize.STRING,
+    contact: Sequelize.STRING,
     role: Sequelize.STRING,
-    zip: Sequelize.INTEGER,
+    emergencyContact: Sequelize.STRING,
+    email: Sequelize.STRING,
+    state: Sequelize.STRING,
+    city: Sequelize.STRING,
+    area: Sequelize.STRING,
+    street: Sequelize.STRING,
+    building: Sequelize.STRING,
+    flat: Sequelize.STRING,
+    lat: Sequelize.STRING,
+    long: Sequelize.STRING,
     agreement: Sequelize.TEXT,
-    contact: Sequelize.STRING
+    status: Sequelize.STRING
 },{
     timestamps: false
 });

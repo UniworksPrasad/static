@@ -9,8 +9,26 @@ exports.createUser = function(req, res){
     })
 }
 
+exports.updateUser = function(req, res){
+    const createUser = userService.updateUser(req.params, req.body, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
 exports.createCategory = function(req, res){
     const createUser = userService.createCategory(req.body, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.updateCategory = function(req, res){
+    const createUser = userService.updateCategory(req.params, req.body, function(err, result){
         if(err){
             res.send(err);
         }

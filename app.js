@@ -115,7 +115,7 @@ ProjectAreaIssueComment.belongsTo(ProjectAreaIssue);
 User.hasMany(ProjectAreaIssueComment, {as: "projectareacomments"});
 ProjectAreaIssueComment.belongsTo(User);
 
-connection.sync().then(result=>{
+connection.sync({force: true}).then(result=>{
     console.log("Database synched successfully!!!");
 }).catch(err=>{
     console.log(err);

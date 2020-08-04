@@ -2,7 +2,6 @@ const Category = require('../models/category');
 const SubCategory = require('../models/subcategory');
 const Prerequisite = require('../models/prerequisite');
 const Tutorial = require('../models/tutorial');
-const Admin = require('../models/user');
 const User = require('../models/user');
 const Area = require('../models/projectArea');
 const Material = require('../models/material');
@@ -14,9 +13,10 @@ const ProjectPlan = require('../models/projectPlan');
 const Milestone = require('../models/milestone');
 const ProjectAreaPlan = require('../models/projectAreaPlan');
 const Vendor_Supervisor = require('../models/vendor_supervisor');
+const Project_MiniCategory = require('../models/project_miniCategory');
 
 exports.createUser = function(body, callback){
-  Admin.create({
+  User.create({
       userName: body.userName,
       role: body.role,
       zip: body.zip,
@@ -27,6 +27,39 @@ exports.createUser = function(body, callback){
       }).catch(err => {
       callback(err);
   })
+}
+
+exports.updateUser = function(params, body, callback){
+  User.findAll({where : {userName: body.userName}}).then(user => {
+    user[0].userName = body.userName,
+    user[0].contact = body.contact,
+    user[0].role = body.role,
+    user[0].emergencyContact = body.emergencyContact;
+    user[0].email = body.email;
+    user[0].state = body.state;
+    user[0].area = body.area;
+    user[0].street = body.street;
+    user[0].building = body.building;
+    user[0].flat = body.flat;
+    user[0].lat = body.lat;
+    user[0].long = body.long;
+    user[0].agreement = body.agreement;
+    user[0].status = body.status;
+    user[0].save().then(result => {
+      callback(result);
+    }).catch(err => {
+      callback(err);
+    });
+  }).catch(err => {
+    callback(err);
+  });
+}
+
+exports.updateCategory = function(params, body, callback){
+  Category.findByPk(params.id).then(category =>{
+    category.categoryName = body.categoryName;
+    category.save().then(result=> {callback(null, result)}).catch(err => {callback(err)});
+  }).catch(err=> {callback(err)});
 }
 
 exports.getUser = function(params, callback){
@@ -72,7 +105,6 @@ exports.getUser = function(params, callback){
 exports.createCategory = function(body, callback){
     Category.create({
         categoryName: body.categoryName,
-
     }).then(result => {
             callback(null, result);
         }
