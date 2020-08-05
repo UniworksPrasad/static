@@ -50,15 +50,32 @@ exports.ConfirmSignUp = function (body, callback) {
             callback(err);
         } // an error occurred
         else{
-            User.findAll({where : {userName: body.Username}}).then(users =>{
-                console.log(users);
-                users[0].status = "CONFIRMED";
-                users[0].save().then(result => {
-                    callback(null, result);
-                }).catch(err => {callback(err)});
-            }).catch(err => {
-                callback(err);
+            var authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails({
+                Username: body.Username,
+                Password: body.Password
             });
+            var userData = {
+                Username: body.Username,
+                Pool: userPool
+            }
+            var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+            cognitoUser.authenticateUser(authenticationDetails, {
+                onSuccess: function (result) {
+                   var accesstoken = result.getAccessToken().getJwtToken();
+                   User.findAll({where : {userName: body.Username}}).then(users =>{
+                    console.log(users);
+                    users[0].status = "CONFIRMED";
+                    users[0].save().then(result => {
+                        callback(null, accesstoken);
+                    }).catch(err => {callback(err)});
+                }).catch(err => {
+                    callback(err);
+                });
+                },
+                onFailure: (function (err) {
+                   callback(err);
+               })
+           })
         } // successful response
       });
  };
