@@ -22,7 +22,13 @@ const User = connection.define('User', {
     lat: Sequelize.STRING,
     long: Sequelize.STRING,
     agreement: Sequelize.TEXT,
-    status: Sequelize.STRING
+    status: Sequelize.STRING,
+    accountNum: Sequelize.STRING,
+    IFSC: Sequelize.STRING,
+    accountHolder: Sequelize.STRING,
+    PAN: Sequelize.STRING,
+    aadharLink: Sequelize.STRING,
+    GSTIN: Sequelize.STRING
 },{
     timestamps: false
 });

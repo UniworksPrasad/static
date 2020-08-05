@@ -45,6 +45,15 @@ exports.getUser = function(req, res){
     })
 }
 
+exports.deleteUser = function(req, res){
+    const getUser = userService.deleteUser(req.params, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
 exports.addCategory = function(req, res){
     const createUser = userService.addCategory(req.body, function(err, result){
         if(err){

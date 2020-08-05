@@ -41,6 +41,7 @@ const upload = multer({
 
 router.post('/auth/register', authController.register);
 router.post('/auth/login', authController.login);
+router.delete('/auth/user', authController.delete);
 router.post('/auth/validate', authController.validate_token);
 router.post('/auth/confirmSignup', authController.confirmSignUp);
 router.get('/auth/listUsers', authController.listUsers);

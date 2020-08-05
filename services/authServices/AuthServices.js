@@ -26,15 +26,16 @@ exports.Register = function (body, callback) {
    userPool.signUp(username, password, attributeList, null, function (err, result) {
      if (err)
          callback(err);
-     User.create({
-        userName: body.Username,
-        contact: body.Phone_number,
-        status : "NOT CONFIRMED"
-    }).then(result =>{
-            callback(null, result);
-        }).catch(err => {
-        callback(err);
-    })
+    else{
+        User.create({
+            contact: body.Username,
+            status : "NOT CONFIRMED"
+        }).then(result =>{
+                callback(null, result);
+            }).catch(err => {
+            callback(err);
+        })
+     }
    })
 }
 
@@ -101,6 +102,35 @@ exports.Login = function (body, callback) {
             callback(err);
         })
     })
+ };
+
+ exports.Delete = function (headers, body, callback) {
+     var params = {
+        AccessToken: headers.authorization /* required */
+      };
+      var cognitoidentityserviceprovider = new AWS.CognitoIdentityServiceProvider({region : pool_region});
+      cognitoidentityserviceprovider.deleteUser(params, function(err, data) {
+        if (err){
+            callback(err);
+        } // an error occurred
+        else{
+            User.destroy({
+                where: {
+                   userName: body.Username //this will be your id that you want to delete
+                }
+             }).then(result => {
+               success = {
+                 message: "User with phone number: "+body.Username+" deleted successfully"
+               }
+               console.log(result);
+               callback(null, success);
+             }).catch(err => {
+               callback(err);
+             });
+        }           // successful response
+
+      });
+
  };
 
  exports.ListUsers = function (body, callback) {

@@ -45,6 +45,12 @@ exports.updateUser = function(params, body, callback){
     user[0].long = body.long;
     user[0].agreement = body.agreement;
     user[0].status = body.status;
+    user[0].accountNum = body.accountNum;
+    user[0].IFSC = body.IFSC;
+    user[0].accountHolder = body.accountHolder;
+    user[0].PAN = body.PAN;
+    user[0].aadharLink = body.aadharLink;
+    user[0].GSTIN = body.GSTIN;
     user[0].save().then(result => {
       callback(result);
     }).catch(err => {
@@ -102,13 +108,29 @@ exports.getUser = function(params, callback){
     })
 }
 
+exports.deleteUser = function(params, callback){
+  User.destroy({
+    where: {
+       id: params.id //this will be your id that you want to delete
+    }
+ }).then(result => {
+   success = {
+     message: "User with userid: "+params.id+" deleted successfully"
+   }
+   console.log(result);
+   callback(null, success);
+ }).catch(err => {
+   callback(err);
+ });
+}
+
 exports.createCategory = function(body, callback){
     Category.create({
         categoryName: body.categoryName,
     }).then(result => {
-            callback(null, result);
-        }
-    ).catch(err => {
+      console.log(result);
+      callback(null, result);
+    }).catch(err => {
         callback(err);
     })
 }
