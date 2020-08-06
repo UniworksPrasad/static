@@ -14,6 +14,7 @@ const Milestone = require('../models/milestone');
 const ProjectAreaPlan = require('../models/projectAreaPlan');
 const Vendor_Supervisor = require('../models/vendor_supervisor');
 const Project_MiniCategory = require('../models/project_miniCategory');
+const Project_MiniCategory_Area = require('../models/project_miniCategory_area');
 
 exports.createUser = function(body, callback){
   User.create({
@@ -263,7 +264,8 @@ exports.addCategory = (body, callback) => {
         topicName: body.topicName,
         videoLink: body.videoLink,
         description: body.description,
-        SubCategoryId: body.SubCategoryId
+        SubCategoryId: body.SubCategoryId,
+        thumbnail: body.thumbnail
     }).then(result =>{
             callback(null, result);
         }).catch(err => {
@@ -467,3 +469,124 @@ exports.addCategory = (body, callback) => {
       });
   }
   //All indedendent data tables
+
+  exports.getArea = (params, callback) => {
+    return Area.findAll()
+      .then((tags) => {
+        return callback(tags);
+      })
+      .catch((err) => {
+        console.log(">> Error while retrieving Tags: ", err);
+        callback(err);
+      });
+  };
+
+  exports.getMaterial = (params, callback) => {
+    return Material.findAll()
+      .then((tags) => {
+        return callback(tags);
+      })
+      .catch((err) => {
+        console.log(">> Error while retrieving Tags: ", err);
+        callback(err);
+      });
+  };
+
+  exports.getTutorial = (params, callback) => {
+    return Tutorial.findAll()
+      .then((tags) => {
+        return callback(tags);
+      })
+      .catch((err) => {
+        console.log(">> Error while retrieving Tags: ", err);
+        callback(err);
+      });
+  };
+
+  exports.getTool = (params, callback) => {
+    return Tool.findAll()
+      .then((tags) => {
+        return callback(tags);
+      })
+      .catch((err) => {
+        console.log(">> Error while retrieving Tags: ", err);
+        callback(err);
+      });
+  };
+
+  exports.getResource = (params, callback) => {
+    return Resource.findAll()
+      .then((tags) => {
+        return callback(tags);
+      })
+      .catch((err) => {
+        console.log(">> Error while retrieving Tags: ", err);
+        callback(err);
+      });
+  };
+
+  exports.getProject = (params, callback) => {
+    return Project.findAll()
+      .then((tags) => {
+        return callback(tags);
+      })
+      .catch((err) => {
+        console.log(">> Error while retrieving Tags: ", err);
+        callback(err);
+      });
+  };
+
+  exports.getMiniCategory = (params, callback) => {
+    return MiniCategory.findAll()
+      .then((tags) => {
+        return callback(tags);
+      })
+      .catch((err) => {
+        console.log(">> Error while retrieving Tags: ", err);
+        callback(err);
+      });
+  };
+
+  exports.getPrerequisite = (params, callback) => {
+    return Prerequisite.findAll()
+      .then((tags) => {
+        return callback(tags);
+      })
+      .catch((err) => {
+        console.log(">> Error while retrieving Tags: ", err);
+        callback(err);
+      });
+  };
+
+  exports.getProjectPlan = (params, callback) => {
+    return ProjectPlan.findAll()
+      .then((tags) => {
+        return callback(tags);
+      })
+      .catch((err) => {
+        console.log(">> Error while retrieving Tags: ", err);
+        callback(err);
+      });
+  };
+
+  exports.getProjectAreaPlan = (params, callback) => {
+    return ProjectAreaPlan.findAll()
+      .then((tags) => {
+        return callback(tags);
+      })
+      .catch((err) => {
+        console.log(">> Error while retrieving Tags: ", err);
+        callback(err);
+      });
+  };
+
+  exports.getMilestone = (params, callback) => {
+    return Milestone.findAll()
+      .then((tags) => {
+        return callback(tags);
+      })
+      .catch((err) => {
+        console.log(">> Error while retrieving Tags: ", err);
+        callback(err);
+      });
+  };

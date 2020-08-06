@@ -85,6 +85,18 @@ router.post('/projectplan', userController.createProjectPlan);
 router.post('/projectareaplan', userController.createProjectAreaPlan);
 router.post('/milestone', userController.createMilestone);
 
+router.get('/area', userController.getArea);
+router.get('/material', userController.getMaterial);
+router.get('/tutorial', userController.getTutorial);
+router.get('/tool', userController.getTool);
+router.get('/resource', userController.getResource);
+router.get('/project', userController.getProject);
+router.get('/minicategory', userController.getMiniCategory);
+router.get('/prerequisite', userController.getPrerequisite);
+router.get('/projectplan', userController.getProjectPlan);
+router.get('/projectareaplan', userController.getProjectAreaPlan);
+router.get('/milestone', userController.getMilestone);
+
 //router.get('/siteRequest/:projectId', userController.siteRequest);
 //router.get('/getSupervisors/:vendorId', userController.getSupervisors);
 ///siteRequest/:projectId
