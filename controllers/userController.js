@@ -326,3 +326,102 @@ exports.getMilestone = function(req, res){
         res.send(result);
     })
 }
+
+exports.getAreaById = function(req, res){
+    const getArea = userService.getAreaById(req.params, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getMaterialById = function(req, res){
+    const getArea = userService.getMaterialById(req.params, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getTutorialById = function(req, res){
+    const getArea = userService.getTutorialById(req.params, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getToolById = function(req, res){
+    const getArea = userService.getToolById(req.params, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getResourceById = function(req, res){
+    const getArea = userService.getResourceById(req.params, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getProjectById = function(req, res){
+    const getArea = userService.getProjectById(req.params, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getMiniCategoryById = function(req, res){
+    const getArea = userService.getMiniCategoryById(req.params, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getPrerequisiteById = function(req, res){
+    const getArea = userService.getPrerequisiteById(req.params, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getProjectPlanById = function(req, res){
+    const getArea = userService.getProjectPlanById(req.params, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getProjectAreaPlanById = function(req, res){
+    const getArea = userService.getProjectAreaPlanById(req.params, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getMilestoneById = function(req, res){
+    const getArea = userService.getMilestoneById(req.params, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+}

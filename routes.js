@@ -98,6 +98,19 @@ router.get('/projectplan', userController.getProjectPlan);
 router.get('/projectareaplan', userController.getProjectAreaPlan);
 router.get('/milestone', userController.getMilestone);
 
+//Get route with specific ID
+
+router.get('/area/:id', userController.getAreaById);
+router.get('/material/:id', userController.getMaterialById);
+router.get('/tutorial/:id', userController.getTutorialById);
+router.get('/tool/:id', userController.getToolById);
+router.get('/resource/:id', userController.getResourceById);
+router.get('/project/:id', userController.getProjectById);
+router.get('/minicategory/:id', userController.getMiniCategoryById);
+router.get('/prerequisite/:id', userController.getPrerequisiteById);
+router.get('/projectplan/:id', userController.getProjectPlanById);
+router.get('/projectareaplan/:id', userController.getProjectAreaPlanById);
+router.get('/milestone/:id', userController.getMilestoneById);
 //router.get('/siteRequest/:projectId', userController.siteRequest);
 //router.get('/getSupervisors/:vendorId', userController.getSupervisors);
 ///siteRequest/:projectId
