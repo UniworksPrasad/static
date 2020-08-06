@@ -64,6 +64,9 @@ const userController = require('./controllers/userController');
 
 router.post('/user', userController.createUser);
 router.put('/user/:id', userController.updateUser);
+router.put('/addsupervisor', userController.addSupervisor);
+router.delete('/removesupervisor', userController.removeSupervisor);
+router.post('/requestsupervisor', userController.requestSupervisor);
 router.post('/category', userController.createCategory);
 router.put('/category/:id', userController.updateCategory);
 router.post('/addcategory', userController.addCategory);
@@ -72,6 +75,7 @@ router.get('/user', userController.listUser);
 router.get('/user/:name', userController.getUser);
 router.post('/subcategory', userController.createSubCategory);
 router.get('/subcategory', userController.listSubCategory);
+router.get('/supervisor/:projectId', userController.getSupProjectDetails);
 
 
 router.post('/area', userController.createArea);

@@ -63,6 +63,34 @@ exports.addCategory = function(req, res){
     })
 }
 
+exports.addSupervisor = function(req, res){
+    const createUser = userService.addSupervisor(req.body, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+
+exports.removeSupervisor = function(req, res){
+    const createUser = userService.removeSupervisor(req.body, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.requestSupervisor = function(req, res){
+    const createUser = userService.requestSupervisor(req.body, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
 exports.listCategory = function(req, res){
     const createUser = userService.listCategory(req.body, function(err, result){
         if(err){
@@ -218,3 +246,12 @@ exports.createArea = function(req, res){
     })
   }
   //All indedendent data tables
+
+  exports.getSupProjectDetails = function(req, res){
+    const createUser = userService.getSupProjectDetails(req.params, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+  }

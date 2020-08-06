@@ -51,6 +51,7 @@ exports.ConfirmSignUp = function (body, callback) {
             callback(err);
         } // an error occurred
         else{
+            console.log("Reached in the confirmsignup else loop");
             var authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails({
                 Username: body.Username,
                 Password: body.Password
@@ -63,7 +64,7 @@ exports.ConfirmSignUp = function (body, callback) {
             cognitoUser.authenticateUser(authenticationDetails, {
                 onSuccess: function (result) {
                    var accesstoken = result.getAccessToken().getJwtToken();
-                   User.findAll({where : {userName: body.Username}}).then(users =>{
+                   User.findAll({where : {contact: body.Username}}).then(users =>{
                     console.log(users);
                     users[0].status = "CONFIRMED";
                     users[0].save().then(result => {

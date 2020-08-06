@@ -5,10 +5,15 @@ const User = connection.define('User', {
     id:{
         type: Sequelize.INTEGER,
         autoIncrement: true,
-        allowNull: false,
+        allowNull: true,
         primaryKey: true
     },
-    userName: Sequelize.STRING,
+    userName: {
+        // needs to be unique
+        type: Sequelize.STRING,
+        allowNull: true,
+        unique: true
+    },
     contact: Sequelize.STRING,
     role: Sequelize.STRING,
     emergencyContact: Sequelize.STRING,
@@ -19,6 +24,7 @@ const User = connection.define('User', {
     street: Sequelize.STRING,
     building: Sequelize.STRING,
     flat: Sequelize.STRING,
+    zip: Sequelize.INTEGER,
     lat: Sequelize.STRING,
     long: Sequelize.STRING,
     agreement: Sequelize.TEXT,

@@ -14,6 +14,10 @@ const Milestone = require('../models/milestone');
 const ProjectAreaPlan = require('../models/projectAreaPlan');
 const Vendor_Supervisor = require('../models/vendor_supervisor');
 const Project_MiniCategory = require('../models/project_miniCategory');
+const { restart } = require('nodemon');
+const Project_MiniCategory_Area = require('../models/project_miniCategory_area');
+const { Op } = require("sequelize");
+const Project_User = require('../models/project_user');
 
 exports.createUser = function(body, callback){
   User.create({
@@ -30,9 +34,8 @@ exports.createUser = function(body, callback){
 }
 
 exports.updateUser = function(params, body, callback){
-  User.findAll({where : {userName: body.userName}}).then(user => {
+  User.findAll({where : {contact: body.contact}}).then(user => {
     user[0].userName = body.userName,
-    user[0].contact = body.contact,
     user[0].role = body.role,
     user[0].emergencyContact = body.emergencyContact;
     user[0].email = body.email;
@@ -41,6 +44,7 @@ exports.updateUser = function(params, body, callback){
     user[0].street = body.street;
     user[0].building = body.building;
     user[0].flat = body.flat;
+    user[0].zip = body.zip;
     user[0].lat = body.lat;
     user[0].long = body.long;
     user[0].agreement = body.agreement;
@@ -122,6 +126,74 @@ exports.deleteUser = function(params, callback){
  }).catch(err => {
    callback(err);
  });
+}
+
+exports.addSupervisor = (body, callback) => {
+  Vendor_Supervisor.findAll({where: {
+    vendorId: body.vendorId,
+    supervisorId: body.supervisorId
+  }}).then(results => {
+    results[0].status = "C";
+    results[0].save().then(output => {
+      callback(null, output);
+    }).catch(err => {
+      callback(err);
+    });
+  }).catch(err => {
+    callback(err);
+  });
+};
+
+exports.removeSupervisor = function(body, callback){
+  Vendor_Supervisor.destroy({
+    where:{
+      vendorId: body.vendorId,
+      supervisorId: body.supervisorId 
+    }
+  }).then(result => {
+    var success = {
+      message: "Mapping removed successfully"
+    };
+    callback(null, success);
+  }).catch(err => {
+    callback(err);
+  })
+}
+
+exports.requestSupervisor = function(body, callback){
+  return User.findAll({where: {
+    contact: body.vendorContact
+  }})
+    .then((user) => {
+      if (!user) {
+        console.log("User not found!");
+        error = {
+            message: "User not found!"
+        }
+        return callback(error);
+      }
+        User.findByPk(body.supervisorId).then((supervisor) => {
+            if (!supervisor) {
+              console.log("Supervisor not found!");
+              error = {
+                  message: "Supervisor not found!"
+              }
+              return callback(error);
+            }
+            Vendor_Supervisor.create({
+              vendorId: user[0].id,
+              supervisorId: supervisor.id,
+              status: "P"
+            }).then(result => {
+              callback(null, result);
+            }).catch(err => {
+                return callback(err);
+            });
+        });
+    })
+    .catch((err) => {
+      return callback(err);
+    });
 }
 
 exports.createCategory = function(body, callback){
@@ -439,9 +511,10 @@ exports.addCategory = (body, callback) => {
   exports.getNotifications = function(params, callback){
     var users = [];
     class notification {
-      constructor(projects, supervisors) {
-          this.projects = projects;
+      constructor(siterequests, supervisors, restallprojects) {
+          this.siterequests = siterequests;
           this.supervisors = supervisors;
+          this.restprojects = restallprojects;
       }
     };
     Vendor_Supervisor.findAll({
@@ -456,9 +529,10 @@ exports.addCategory = (body, callback) => {
         console.log(output.zip);
         Project.findAll({
           where : {
-          zip: output.zip
+          zip: output.zip,
+          status: "I"
         }
-      }).then(projects => {
+      }).then(siterequests => {
         Vendor_Supervisor.findAll({where : {
           vendorId: params.userId,
           status: "P"
@@ -471,8 +545,27 @@ exports.addCategory = (body, callback) => {
           }
           User.findAll({where : {
             id: users
-          }}).then(result => {
-            callback(null, new notification(projects, result));
+          }}).then(supervisors => {
+            Project_User.findAll({
+              where: {
+                id: params.userId
+              }
+            }).then(projects => {
+              var projectIdArray = [];
+              projects.forEach(element => {
+                projectIdArray.push(element.projectId);
+              });
+              Project.findAll({
+                where: {
+                  id : projectIdArray,
+                  [Op.not]: {
+                    status: "F"
+                  }
+                }
+              }).then(projects => {
+                callback(null, new notification(siterequests, supervisors, projects));
+              }).catch(err => {callback(err)});
+            }).catch(err => callback(err));
           }).catch(err => {
             callback(err);
           });
@@ -488,4 +581,61 @@ exports.addCategory = (body, callback) => {
         callback(err);
       });
   }
+
+  exports.getSupProjectDetails = function(params, callback){
+      Project_MiniCategory.findAll(
+        {
+          where:
+          {
+            projectId: 1
+          },
+          include: [{
+            model: Area,
+            where: {
+              id: 1
+            },
+            as: 'projectminicategoryareas'
+          }]
+      }).then(res => {
+        Project_MiniCategory_Area.findAll({where: {areaId: 1}, include: [{all:true}]}).then(res1 =>{
+          output = {
+            topdetials: res,
+            bottomdetails: res1
+          };
+          callback(null, output);
+        }).catch(err => {callback(err)});
+      }).catch(err => {callback(err)});  
+  }
+  // const { Op } = require("sequelize");
+  // exports.getSupProjectDetails = function(params, callback){
+  //   Project_MiniCategory.findAll({
+  //     where: {
+  //       projectId: params.projectId
+  //     }
+  //   }).then(projectMinicategories => {
+  //     var minicategoryArray = []
+  //     projectMinicategories.forEach(element => {
+  //       minicategoryArray.push(element.minicategoryId);
+  //     });
+  //     console.log(minicategoryArray);
+  //     Project_MiniCategory_Area.findAll({
+  //       where : {
+  //         projectMiniCategoryId : {
+  //           [Op.or]: minicategoryArray
+  //         }
+  //       }
+  //     }).then(result => {
+  //       let areaSet = new Set();
+  //       result.forEach(element => {
+  //         areaSet.add(element.areaId);
+  //       });
+  //       console.log(areaSet);
+  //       let array = Array.from(areaSet);
+  //       console.log(array);
+  //       callback(result);
+  //     }).catch(err => {callback(err)});
+  //   }).catch(err => {
+  //     callback(err);
+  //   });
+  // }
   //All indedendent data tables

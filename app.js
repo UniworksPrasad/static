@@ -115,11 +115,11 @@ ProjectAreaIssueComment.belongsTo(ProjectAreaIssue);
 User.hasMany(ProjectAreaIssueComment, {as: "projectareacomments"}, {onDelete: 'cascade'});
 ProjectAreaIssueComment.belongsTo(User);
 
-// connection.sync({force: false}).then(result=>{
-//     console.log("Database synched successfully!!!");
-// }).catch(err=>{
-//     console.log(err);
-// });
+connection.sync({force: false}).then(result=>{
+    console.log("Database synched successfully!!!");
+}).catch(err=>{
+    console.log(err);
+});
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
