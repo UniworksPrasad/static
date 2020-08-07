@@ -28,7 +28,8 @@ exports.Register = function (body, callback) {
          callback(err);
     else{
         User.create({
-            contact: body.Username,
+            userName: body.Username,
+            contact: body.Phone_number,
             status : "NOT CONFIRMED"
         }).then(result =>{
                 callback(null, result);
@@ -64,7 +65,6 @@ exports.ConfirmSignUp = function (body, callback) {
                 onSuccess: function (result) {
                    var accesstoken = result.getAccessToken().getJwtToken();
                    User.findAll({where : {userName: body.Username}}).then(users =>{
-                    console.log(users);
                     users[0].status = "CONFIRMED";
                     users[0].save().then(result => {
                         callback(null, accesstoken);
