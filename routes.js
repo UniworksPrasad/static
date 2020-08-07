@@ -4,6 +4,7 @@ const aws = require( 'aws-sdk' );
 const multerS3 = require( 'multer-s3' );
 const multer = require('multer');
 const path = require( 'path' );
+var authMiddleware = require('./middleware/AuthMiddleware');
 require('dotenv').config();
 
 const s3 = new aws.S3({
@@ -100,7 +101,7 @@ router.get('/milestone', userController.getMilestone);
 
 //Get route with specific ID
 
-router.get('/area/:id', userController.getAreaById);
+// router.get('/area/:id', userController.getAreaById);
 router.get('/material/:id', userController.getMaterialById);
 router.get('/tutorial/:id', userController.getTutorialById);
 router.get('/tool/:id', userController.getToolById);
@@ -118,7 +119,7 @@ router.get('/siteRequest/:projectId', userController.getSiteRequest);
 router.get('/notifications/:userId', userController.getNotifications);
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-
-
+//Authorized Route
+router.get('/area/:id', authMiddleware.Validate, userController.getAreaById);
 
 module.exports = router;
