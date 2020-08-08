@@ -1,20 +1,17 @@
 const Sequelize = require('sequelize');
 const connection = require('../utils/connection');
 
-const Tool = connection.define('Tool', {
+const Project_Area_Mini_Mile = connection.define('Project_Area_Mini_Mile', {
     id:{
         type: Sequelize.INTEGER,
         autoIncrement: true,
         allowNull: false,
         primaryKey: true
     },
-    toolName: Sequelize.STRING,
-    imageUrl: Sequelize.STRING,
-    description: Sequelize.TEXT
+    status: Sequelize.STRING,
+    imageUrl: Sequelize.STRING
 },{
     timestamps: false
 });
 
-module.exports = Tool;
-
-//Carpentry
+module.exports = Project_Area_Mini_Mile;

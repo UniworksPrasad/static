@@ -9,8 +9,35 @@ exports.createUser = function(req, res){
     })
 }
 
+exports.updateUser = function(req, res){
+    const createUser = userService.updateUser(req.params, req.body, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
 exports.createCategory = function(req, res){
     const createUser = userService.createCategory(req.body, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.updateCategory = function(req, res){
+    const createUser = userService.updateCategory(req.params, req.body, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getVendor = function(req, res){
+    const getUser = userService.getVendor(req.params, function(err, result){
         if(err){
             res.send(err);
         }
@@ -27,8 +54,63 @@ exports.getUser = function(req, res){
     })
 }
 
-exports.addCategory = function(req, res){
-    const createUser = userService.addCategory(req.body, function(err, result){
+exports.deleteUser = function(req, res){
+    const getUser = userService.deleteUser(req.params, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.addCategoryToVendor = function(req, res){
+    const createUser = userService.addCategoryToVendor(req.body, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.removeCategory = function(req, res){
+    const createUser = userService.removeCategory(req.body, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.addSupervisor = function(req, res){
+    const createUser = userService.addSupervisor(req.body, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.listSupervisors = function(req, res){
+    const createUser = userService.listSupervisors(req.params, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+
+exports.removeSupervisor = function(req, res){
+    const createUser = userService.removeSupervisor(req.body, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.requestSupervisor = function(req, res){
+    const createUser = userService.requestSupervisor(req.body, function(err, result){
         if(err){
             res.send(err);
         }
@@ -128,6 +210,15 @@ exports.createArea = function(req, res){
     })
   }
 
+  exports.getProject = function(req, res){
+    const createUser = userService.getProject(req.params, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+  }
+
   exports.createMiniCategory = function(req, res){
     const createUser = userService.createMiniCategory(req.body, function(err, result){
         if(err){
@@ -191,3 +282,12 @@ exports.createArea = function(req, res){
     })
   }
   //All indedendent data tables
+
+  exports.getSupProjectDetails = function(req, res){
+    const createUser = userService.getSupProjectDetails(req.params, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+  }

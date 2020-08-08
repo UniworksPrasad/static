@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
 var bodyParser = require('body-parser');
@@ -30,6 +31,9 @@ const ConstructVend_Category = require('./models/constructVend_category');
 const Project_User = require('./models/project_user');
 const User = require('./models/user');
 const Vendor_Supervisor = require('./models/vendor_supervisor');
+const Project_Area = require('./models/project_area');
+const Project_Area_Minicategory = require('./models/project_area_minicategory');
+const Project_Area_Mini_Mile = require('./models/project_area_mini_mile');
 
 connection
   .authenticate()
@@ -40,50 +44,50 @@ connection
     console.error('Unable to connect to the database:', err);
   });
 
-User.belongsToMany(Category, { through: ConstructVend_Category, as: 'categories', foreignKey: "userId" });
-Category.belongsToMany(User, { through: ConstructVend_Category, as: 'constructionVendors', foreignKey: "categoryId" });
+User.belongsToMany(Category, { through: ConstructVend_Category, as: 'categories', foreignKey: "userId" }, {onDelete: 'cascade'});
+Category.belongsToMany(User, { through: ConstructVend_Category, as: 'constructionVendors', foreignKey: "categoryId" }, {onDelete: 'cascade'});
 
-User.belongsToMany(User, {through: Vendor_Supervisor, as: 'supervisors', foreignKey: "vendorId"});
-User.belongsToMany(User, {through: Vendor_Supervisor, as: 'vendors', foreignKey: "supervisorId"});
+User.belongsToMany(User, {through: Vendor_Supervisor, as: 'supervisors', foreignKey: "vendorId"}, {onDelete: 'cascade'});
+User.belongsToMany(User, {through: Vendor_Supervisor, as: 'vendors', foreignKey: "supervisorId"}, {onDelete: 'cascade'});
 
-Category.hasMany(SubCategory, { as: "subcategories" });
+Category.hasMany(SubCategory, { as: "subcategories" }, {onDelete: 'cascade'});
 SubCategory.belongsTo(Category);
 
-SubCategory.hasMany(Prerequisite, { as: "prerequisites" });
+SubCategory.hasMany(Prerequisite, { as: "prerequisites" }, {onDelete: 'cascade'});
 Prerequisite.belongsTo(SubCategory);
 
-SubCategory.hasMany(Tutorial, { as: "tutorials" });
+SubCategory.hasMany(Tutorial, { as: "tutorials" }, {onDelete: 'cascade'});
 Tutorial.belongsTo(SubCategory);
 
-Project.hasMany(ProjectIssue, {as: "projectIssues"});
+Project.hasMany(ProjectIssue, {as: "projectIssues"}, {onDelete: 'cascade'});
 ProjectIssue.belongsTo(Project);
 
-ProjectIssue.hasMany(ProjectIssueComment, {as: "comments"});
+ProjectIssue.hasMany(ProjectIssueComment, {as: "comments"}, {onDelete: 'cascade'});
 ProjectIssueComment.belongsTo(ProjectIssue);
 
-User.hasMany(ProjectIssueComment, {as: "projectcomments"});
+User.hasMany(ProjectIssueComment, {as: "projectcomments"}, {onDelete: 'cascade'});
 ProjectIssueComment.belongsTo(User);
 
-SubCategory.hasMany(MiniCategory, {as: "miniCategories"});
+SubCategory.hasMany(MiniCategory, {as: "miniCategories"}, {onDelete: 'cascade'});
 MiniCategory.belongsTo(SubCategory);
 
-SubCategory.belongsToMany(Tool, { through: SubCategory_Tool, as: 'tools', foreignKey: "subcategoryId" });
-Tool.belongsToMany(SubCategory, { through: SubCategory_Tool, as: 'subcategories', foreignKey: "toolId" });
+SubCategory.belongsToMany(Tool, { through: SubCategory_Tool, as: 'tools', foreignKey: "subcategoryId" }, {onDelete: 'cascade'});
+Tool.belongsToMany(SubCategory, { through: SubCategory_Tool, as: 'subcategories', foreignKey: "toolId" }, {onDelete: 'cascade'});
 
-SubCategory.belongsToMany(Resource, { through: SubCategory_Resource, as: 'subcategoryresources', foreignKey: "subcategoryId" });
-Resource.belongsToMany(SubCategory, { through: SubCategory_Resource, as: 'resourcesubcategories', foreignKey: "resourceId" });
+SubCategory.belongsToMany(Resource, { through: SubCategory_Resource, as: 'subcategoryresources', foreignKey: "subcategoryId" }, {onDelete: 'cascade'});
+Resource.belongsToMany(SubCategory, { through: SubCategory_Resource, as: 'resourcesubcategories', foreignKey: "resourceId" }, {onDelete: 'cascade'});
 
-MiniCategory.hasMany(Milestone, {as: "milestones"});
+MiniCategory.hasMany(Milestone, {as: "milestones"}, {onDelete: 'cascade'});
 Milestone.belongsTo(MiniCategory);
 
-MiniCategory.belongsToMany(Material, { through: MiniCategory_Material, as: 'minicategorymaterials', foreignKey: "minicategoryId" });
-Material.belongsToMany(MiniCategory, { through: MiniCategory_Material, as: 'materialminicategories', foreignKey: "materialId" });
+MiniCategory.belongsToMany(Material, { through: MiniCategory_Material, as: 'minicategorymaterials', foreignKey: "minicategoryId" }, {onDelete: 'cascade'});
+Material.belongsToMany(MiniCategory, { through: MiniCategory_Material, as: 'materialminicategories', foreignKey: "materialId" }, {onDelete: 'cascade'});
 
-Project.hasMany(ProjectPlan, {as: "projectplans"});
+Project.hasMany(ProjectPlan, {as: "projectplans"}, {onDelete: 'cascade'});
 ProjectPlan.belongsTo(Project);
 
-Project.belongsToMany(MiniCategory, { through: Project_MiniCategory, as: 'projectminicategories', foreignKey: "projectId" });
-MiniCategory.belongsToMany(Project, { through: Project_MiniCategory, as: 'minicategoryprojects', foreignKey: "minicategoryId" });
+Project.belongsToMany(MiniCategory, { through: Project_MiniCategory, as: 'projectminicategories', foreignKey: "projectId" }, {onDelete: 'cascade'});
+MiniCategory.belongsToMany(Project, { through: Project_MiniCategory, as: 'minicategoryprojects', foreignKey: "minicategoryId" }, {onDelete: 'cascade'});
 
 //Project.belongsTo(Category, { as: 'category' });
 Category.hasOne(Project);
@@ -93,32 +97,44 @@ SubCategory.hasOne(Project);
 Project.belongsTo(SubCategory);
 //Project.belongsTo(SubCategory, { as: 'subcategory' });
 
-Project.belongsToMany(User, { through: Project_User, as: 'users', foreignKey: "projectId" });
-User.belongsToMany(Project, { through: Project_User, as: 'projects', foreignKey: "userId" });
+Project.belongsToMany(User, { through: Project_User, as: 'users', foreignKey: "projectId" }, {onDelete: 'cascade'});
+User.belongsToMany(Project, { through: Project_User, as: 'projects', foreignKey: "userId" }, {onDelete: 'cascade'});
 
-Project_MiniCategory.belongsToMany(Area, { through: Project_MiniCategory_Area, as: 'projectminicategoryareas', foreignKey: "projectMiniCategoryId" });
-Area.belongsToMany(Project_MiniCategory, { through: Project_MiniCategory_Area, as: 'areaprojectminicategories', foreignKey: "areaId" });
+// Project_MiniCategory.belongsToMany(Area, { through: Project_MiniCategory_Area, as: 'projectminicategoryareas', foreignKey: "projectMiniCategoryId" });
+// Area.belongsToMany(Project_MiniCategory, { through: Project_MiniCategory_Area, as: 'areaprojectminicategories', foreignKey: "areaId" });
 
-Project_MiniCategory_Area.belongsToMany(Milestone, { through: Project_MiniCategory_Area_Milestone, as: 'projectminicategoryareamilestones', foreignKey: "projectMiniAreaId" });
-Milestone.belongsToMany(Project_MiniCategory_Area, { through: Project_MiniCategory_Area_Milestone, as: 'milestoneprojectminicategories', foreignKey: "milestoneId" });
+// Project_MiniCategory_Area.belongsToMany(Milestone, { through: Project_MiniCategory_Area_Milestone, as: 'projectminicategoryareamilestones', foreignKey: "projectMiniAreaId" });
+// Milestone.belongsToMany(Project_MiniCategory_Area, { through: Project_MiniCategory_Area_Milestone, as: 'milestoneprojectminicategories', foreignKey: "milestoneId" });
 
-Project_MiniCategory_Area.hasMany(ProjectAreaPlan, {as: "projectminicategoryareaplans"});
-ProjectAreaPlan.belongsTo(Project_MiniCategory_Area);
+// Project_MiniCategory_Area.hasMany(ProjectAreaPlan, {as: "projectminicategoryareaplans"});
+// ProjectAreaPlan.belongsTo(Project_MiniCategory_Area);
 
-Project_MiniCategory_Area.hasMany(ProjectAreaIssue, {as: "projectminicategoryareaissues"});
-ProjectAreaIssue.belongsTo(Project_MiniCategory_Area);
+// Project_MiniCategory_Area.hasMany(ProjectAreaIssue, {as: "projectminicategoryareaissues"});
+// ProjectAreaIssue.belongsTo(Project_MiniCategory_Area);
 
 ProjectAreaIssue.hasMany(ProjectAreaIssueComment, {as: "projectareacomments"});
 ProjectAreaIssueComment.belongsTo(ProjectAreaIssue);
 
-User.hasMany(ProjectAreaIssueComment, {as: "projectareacomments"});
+User.hasMany(ProjectAreaIssueComment, {as: "projectareacomments"}, {onDelete: 'cascade'});
 ProjectAreaIssueComment.belongsTo(User);
 
-connection.sync().then(result=>{
-    console.log("Database synched successfully!!!");
-}).catch(err=>{
-    console.log(err);
-});
+Project.belongsToMany(Area, { through: Project_Area, as: 'areas', foreignKey: "projectId" }, {onDelete: 'cascade'});
+Area.belongsToMany(Project, { through: Project_Area, as: 'projects', foreignKey: "areaId" }, {onDelete: 'cascade'});
+
+Project_Area.belongsToMany(MiniCategory, { through: Project_Area_Minicategory, as: 'minicategories', foreignKey: "projectareaId" }, {onDelete: 'cascade'});
+MiniCategory.belongsToMany(Project_Area, { through: Project_Area_Minicategory, as: 'projectareas', foreignKey: "minicategoryId" }, {onDelete: 'cascade'});
+
+Project_Area.hasMany(ProjectAreaPlan, {as: "projectareaplans"});
+ProjectAreaPlan.belongsTo(Project_Area);
+
+Project_Area_Minicategory.belongsToMany(Milestone, { through: Project_Area_Mini_Mile, as: 'milestones', foreignKey: "projectareaminiId" }, {onDelete: 'cascade'});
+Milestone.belongsToMany(Project_Area_Minicategory, { through: Project_Area_Mini_Mile, as: 'projectareaminis', foreignKey: "milestoneId" }, {onDelete: 'cascade'});
+
+// connection.sync({force: false}).then(result=>{
+//     console.log("Database synched successfully!!!");
+// }).catch(err=>{
+//     console.log(err);
+// });
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());

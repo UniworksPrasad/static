@@ -2,7 +2,6 @@ const Category = require('../models/category');
 const SubCategory = require('../models/subcategory');
 const Prerequisite = require('../models/prerequisite');
 const Tutorial = require('../models/tutorial');
-const Admin = require('../models/user');
 const User = require('../models/user');
 const Area = require('../models/projectArea');
 const Material = require('../models/material');
@@ -14,9 +13,17 @@ const ProjectPlan = require('../models/projectPlan');
 const Milestone = require('../models/milestone');
 const ProjectAreaPlan = require('../models/projectAreaPlan');
 const Vendor_Supervisor = require('../models/vendor_supervisor');
+const Project_MiniCategory = require('../models/project_miniCategory');
+const Project_MiniCategory_Area = require('../models/project_miniCategory_area');
+const { Op } = require("sequelize");
+const Project_User = require('../models/project_user');
+const ConstructVend_Category = require('../models/constructVend_category');
+const Project_Area = require('../models/project_area');
+const Project_Area_Mini_Mile = require('../models/project_area_mini_mile');
+const Project_Area_Minicategory = require('../models/project_area_minicategory');
 
 exports.createUser = function(body, callback){
-  Admin.create({
+  User.create({
       userName: body.userName,
       role: body.role,
       zip: body.zip,
@@ -29,59 +36,202 @@ exports.createUser = function(body, callback){
   })
 }
 
-exports.getUser = function(params, callback){
-    User.findAll({
-        where: {
-            userName: params.name
-        },
-        include: [
-          {
-            model: Category,
-            as: "categories",
-            attributes: ["id", "categoryName"],
-            through: {
-              attributes: [],
-            },
-            // through: {
-            //   attributes: ["tag_id", "tutorial_id"],
-            // },
-            include :[
-                {
-                    model: SubCategory,
-                    as: "subcategories",
-                    attributes: ["id", "subcategoryName"],
-                    include: [{
-                        model: Prerequisite,
-                        as: "prerequisites"
-                    },{
-                        model: Tutorial,
-                        as: "tutorials"
-                    }]
-                }
-            ]
+exports.updateUser = function(params, body, callback){
+  User.findAll({where : {contact: body.contact}}).then(user => {
+    user[0].userName = body.userName,
+    user[0].name = body.name,
+    user[0].role = body.role,
+    user[0].contact = body.contact,
+    user[0].emergencyContact = body.emergencyContact;
+    user[0].email = body.email;
+    user[0].state = body.state;
+    user[0].area = body.area;
+    user[0].street = body.street;
+    user[0].building = body.building;
+    user[0].flat = body.flat;
+    user[0].zip = body.zip;
+    user[0].lat = body.lat;
+    user[0].long = body.long;
+    user[0].agreement = body.agreement;
+    user[0].status = body.status;
+    user[0].accountNum = body.accountNum;
+    user[0].IFSC = body.IFSC;
+    user[0].accountHolder = body.accountHolder;
+    user[0].PAN = body.PAN;
+    user[0].aadharLink = body.aadharLink;
+    user[0].GSTIN = body.GSTIN;
+    user[0].save().then(result => {
+      callback(result);
+    }).catch(err => {
+      callback(err);
+    });
+  }).catch(err => {
+    callback(err);
+  });
+}
+
+exports.updateCategory = function(params, body, callback){
+  Category.findByPk(params.id).then(category =>{
+    category.categoryName = body.categoryName;
+    category.save().then(result=> {callback(null, result)}).catch(err => {callback(err)});
+  }).catch(err=> {callback(err)});
+}
+
+exports.getVendor = function(params, callback){
+  class Vendordetails {
+    constructor(vendor, categorydetails) {
+        this.vendor = vendor;
+        this.categorydetails = categorydetails;
+    }
+  };
+  
+  User.findAll({where:{contact: params.contact}
+  })
+    .then((user) => {
+      console.log(user);
+      ConstructVend_Category.findAll({where: {
+        userId: user[0].id
+      }
+    }).then(results=>{
+      var array = [];
+      results.forEach(element => {
+        array.push(element.categoryId);
+      });
+      console.group(array);
+        Category.findAll({
+          where : {
+            id:array
           },
-        ],
-      }).then(result => {
-            callback(null, result);
-        }
-    ).catch(err => {
-        callback(err);
+          include: [{
+            model: SubCategory,
+            as: "subcategories",
+            include: [{
+              model: Tutorial,
+              as: "tutorials"
+            },
+          {
+            model: Prerequisite,
+            as: "prerequisites"
+          }]
+          }]
+        }).then(output => {
+          User.findByPk(results[0].userId).then(user => {callback(null, new Vendordetails(user, output))}).catch();
+        }).catch(err=> {callback(err)});
+      }).catch(err=>{callback(err)});
     })
+    .catch((err) => {
+      console.log(">> Error while retrieving Tutorials: ", err);
+      return callback(err);
+    });
+}
+
+exports.getUser = function(params, callback){
+  User.findAll({where:{contact: params.contact}
+  ,include: [{all:true}]}
+  ).then((user) => {
+      callback(null, user);
+    })
+    .catch((err) => {
+      console.log(">> Error while retrieving Tutorials: ", err);
+      return callback(err);
+    });
+}
+
+exports.deleteUser = function(params, callback){
+  User.destroy({
+    where: {
+       contact: params.contact //this will be your id that you want to delete
+    }
+ }).then(result => {
+   success = {
+     message: "User with userid: "+params.contact+" deleted successfully"
+   }
+   callback(null, success);
+ }).catch(err => {
+   callback(err);
+ });
+}
+
+exports.addSupervisor = (body, callback) => {
+  Vendor_Supervisor.findAll({where: {
+    vendorId: body.vendorId,
+    supervisorId: body.supervisorId
+  }}).then(results => {
+    results[0].status = "C";
+    results[0].save().then(output => {
+      callback(null, output);
+    }).catch(err => {
+      callback(err);
+    });
+  }).catch(err => {
+    callback(err);
+  });
+};
+
+exports.removeSupervisor = function(body, callback){
+  Vendor_Supervisor.destroy({
+    where:{
+      vendorId: body.vendorId,
+      supervisorId: body.supervisorId 
+    }
+  }).then(result => {
+    var success = {
+      message: "Mapping removed successfully"
+    };
+    callback(null, success);
+  }).catch(err => {
+    callback(err);
+  })
+}
+
+exports.requestSupervisor = function(body, callback){
+  return User.findAll({where: {
+    contact: body.vendorContact
+  }})
+    .then((user) => {
+      if (!user) {
+        console.log("User not found!");
+        error = {
+            message: "User not found!"
+        }
+        return callback(error);
+      }
+        User.findByPk(body.supervisorId).then((supervisor) => {
+            if (!supervisor) {
+              console.log("Supervisor not found!");
+              error = {
+                  message: "Supervisor not found!"
+              }
+              return callback(error);
+            }
+            Vendor_Supervisor.create({
+              vendorId: user[0].id,
+              supervisorId: supervisor.id,
+              status: "P"
+            }).then(result => {
+              callback(null, result);
+            }).catch(err => {
+                return callback(err);
+            });
+        });
+    })
+    .catch((err) => {
+      return callback(err);
+    });
 }
 
 exports.createCategory = function(body, callback){
     Category.create({
         categoryName: body.categoryName,
-
     }).then(result => {
-            callback(null, result);
-        }
-    ).catch(err => {
+      console.log(result);
+      callback(null, result);
+    }).catch(err => {
         callback(err);
     })
 }
 
-exports.addCategory = (body, callback) => {
+exports.addCategoryToVendor = function(body, callback){
     return User.findByPk(body.userId)
       .then((user) => {
         if (!user) {
@@ -91,41 +241,67 @@ exports.addCategory = (body, callback) => {
           }
           return callback(error);
         }
-          Category.findByPk(body.categoryId).then((category) => {
-              if (!category) {
-                console.log("Category not found!");
+          Category.findAll({
+            where : {
+              id: body.categories
+            }
+          }).then((output) => {
+              if (output.length < body.categories.length) {
+                console.log("One or more categories not found!");
                 error = {
-                    message: "Category not found!"
+                    message: "One or more categories not found!"
                 }
                 return callback(error);
               }
-              user.addCategory(category).then(result => {
-                callback(null, result);
+              output.forEach(element => {
+                user.addCategory(element).then().catch(err => {
+                  callback(err);
+                });
+              })
+              var success = {
+                message: "All categories have been added successfully"
+              }
+              callback(null, success);
               }).catch(err => {
                   return callback(err);
               });
-          });
-      })
+          })
       .catch((err) => {
-        console.log(">> Error while adding Tutorial to Tag: ", err);
+        console.log(">> Error while adding categories to user ", err);
         return callback(err);
       });
   };
 
+  exports.removeCategory = (body, callback) => {
+    ConstructVend_Category.destroy({where: {
+      userId: body.userId,
+      categoryId: {
+        [Op.or] : body.categories
+      }
+    }}).then(result => {
+      var success = {
+        message: result + " categories unmapped successfully"
+      }
+      callback(null, success);
+    }).catch(err => {
+      callback(err);
+    });
+  }
+
   exports.listCategory = (body, callback) => {
     return Category.findAll({
-      include: [
-        {
-          model: User,
-          as: "users",
-          attributes: ["id", "userName", "role"],
-          through: {
-            attributes: [],
-          }
-        },{
+      include: [{
             model: SubCategory,
             as: "subcategories",
-            attributes: ["id", "subcategoryName"]
+            attributes: ["id", "subcategoryName"],
+            include: [{
+              model: Tutorial,
+              as: "tutorials"
+            },
+            {
+              model: Prerequisite,
+              as: "prerequisites" 
+            }]
         }
       ],
     })
@@ -241,7 +417,9 @@ exports.addCategory = (body, callback) => {
 
   exports.createTool = function(body, callback){
     Tool.create({
-        toolName: body.toolName
+        toolName: body.toolName,
+        imageUrl: body.imageUrl,
+        description: body.description
     }).then(result =>{
             callback(null, result);
         }).catch(err => {
@@ -385,11 +563,17 @@ exports.addCategory = (body, callback) => {
   exports.getNotifications = function(params, callback){
     var users = [];
     class notification {
-      constructor(projects, users) {
-          this.projects = projects;
-          this.users = users;
+      constructor(siterequests, supervisors, restallprojects) {
+          this.siterequests = siterequests;
+          this.supervisors = supervisors;
+          this.restallprojects = restallprojects;
       }
     };
+    Vendor_Supervisor.findAll({
+      where: {
+        vendorId: params.userId
+      }
+    }).then().catch();
     User.findByPk(params.userId,{
         attributes: ['zip']
       })
@@ -397,9 +581,10 @@ exports.addCategory = (body, callback) => {
         console.log(output.zip);
         Project.findAll({
           where : {
-          zip: output.zip
+          zip: output.zip,
+          status: "I"
         }
-      }).then(projects => {
+      }).then(siterequests => {
         Vendor_Supervisor.findAll({where : {
           vendorId: params.userId,
           status: "P"
@@ -412,8 +597,28 @@ exports.addCategory = (body, callback) => {
           }
           User.findAll({where : {
             id: users
-          }}).then(result => {
-            callback(null, new notification(projects, result));
+          }}).then(supervisors => {
+            Project_User.findAll({
+              where: {
+                id: params.userId
+              }
+            }).then(projects => {
+              var projectIdArray = [];
+              projects.forEach(element => {
+                projectIdArray.push(element.projectId);
+              });
+              console.log(projectIdArray);
+              Project.findAll({
+                where: {
+                  id : projectIdArray,
+                  [Op.not]: {
+                    status: "F"
+                  }
+                }
+              }).then(projects => {
+                callback(null, new notification(siterequests, supervisors, projects));
+              }).catch(err => {callback(err)});
+            }).catch(err => callback(err));
           }).catch(err => {
             callback(err);
           });
@@ -429,4 +634,155 @@ exports.addCategory = (body, callback) => {
         callback(err);
       });
   }
+
+  exports.getSupProjectDetails = function(params, callback){
+      Project_MiniCategory.findAll(
+        {
+          where:
+          {
+            projectId: 1
+          },
+          include: [{
+            model: Area,
+            where: {
+              id: 1
+            },
+            as: 'projectminicategoryareas'
+          }]
+      }).then(res => {
+        Project_MiniCategory_Area.findAll({where: {areaId: 1}, include: [{all:true}]}).then(res1 =>{
+          output = {
+            topdetials: res,
+            bottomdetails: res1
+          };
+          callback(null, output);
+        }).catch(err => {callback(err)});
+      }).catch(err => {callback(err)});  
+  }
+  // const { Op } = require("sequelize");
+  // exports.getSupProjectDetails = function(params, callback){
+  //   Project_MiniCategory.findAll({
+  //     where: {
+  //       projectId: params.projectId
+  //     }
+  //   }).then(projectMinicategories => {
+  //     var minicategoryArray = []
+  //     projectMinicategories.forEach(element => {
+  //       minicategoryArray.push(element.minicategoryId);
+  //     });
+  //     console.log(minicategoryArray);
+  //     Project_MiniCategory_Area.findAll({
+  //       where : {
+  //         projectMiniCategoryId : {
+  //           [Op.or]: minicategoryArray
+  //         }
+  //       }
+  //     }).then(result => {
+  //       let areaSet = new Set();
+  //       result.forEach(element => {
+  //         areaSet.add(element.areaId);
+  //       });
+  //       console.log(areaSet);
+  //       let array = Array.from(areaSet);
+  //       console.log(array);
+  //       callback(result);
+  //     }).catch(err => {callback(err)});
+  //   }).catch(err => {
+  //     callback(err);
+  //   });
+  // }
   //All indedendent data tables
+
+  // exports.getProject = function(params, callback){
+  //   let map = new Map();
+  //   Project_Area.findAll({
+  //     where : {
+  //       projectId : params.id
+  //     }
+  //   }).then(result => {
+  //     var mySet = new Set();
+  //     result.forEach(element => {
+  //       mySet.add(element.areaId)
+  //     });
+  //     let areaArray = Array.from(mySet);
+  //     console.log(areaArray);
+  //     areaArray.forEach(element => {
+  //       Project_Area.findAll({
+  //         where : {
+  //           areaId : element,
+  //           projectId: params.id
+  //         }
+  //       }).then(result => {
+  //         result.forEach(other => {
+  //           map.set(element, other.id);
+  //           console.log(map);
+  //         });
+  //       }).catch();
+  //     });
+  //     console.log("Map before callback");
+  //     console.log(map);
+  //     callback(null, null);
+  //   }).catch(err => {
+  //     callback(err);
+  //   });
+  // }
+
+
+  exports.getProject = function(params, callback){
+    class output {
+      constructor(siteEngineer, differentAreas, minicategories) {
+        this.siteEngineer = siteEngineer;  
+        this.differentAreas = differentAreas;
+          this.minicategories = minicategories;
+      }
+    };
+    var newOutput = new output();
+    Project_User.findAll({where: {
+      projectId: params.id
+    }}).then(results=>{
+      var users = [];
+      results.forEach(element => {
+        users.push(element.userId);
+      });
+      User.findAll({where: {
+        id: users,
+        role: "SENG"
+      }}).then(outputs => {
+        newOutput.siteEngineer = outputs[0];
+      }).catch();
+    }).catch();
+    Project_Area.findAll({where:{
+      projectId: params.id
+    },include:[{all:true}]}).then(result=>{
+      newOutput.differentAreas = result;
+      Project_Area_Minicategory.findAll({where:{
+        projectareaId: [1,2]
+      },include:[{all:true}]}).then(miniresult => {
+        newOutput.minicategories = miniresult;
+        callback(null, newOutput);
+      }).catch(err => {callback(err)});
+    }).catch(
+      err=> {
+        callback(err)
+      });
+  }
+
+  exports.listSupervisors = function(params, callback){
+    Vendor_Supervisor.findAll({where:{
+      vendorId: params.id
+    }}).then(result => {
+      var array = [];
+      result.forEach(element =>{
+        array.push(element.supervisorId);
+      });
+      User.findAll({where:{
+        id: array
+      },include: [{model: User, as:"supervisors"}]}).then(result => {
+        callback(null, result);
+      }).catch(err => {
+        callback(err);
+      });
+    }).catch(err => {
+      callback(err);
+    });
+  }
