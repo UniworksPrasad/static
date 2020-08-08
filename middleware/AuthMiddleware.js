@@ -1,7 +1,11 @@
 const request = require('request');
 const jwkToPem = require('jwk-to-pem');
+const AWS = require('aws-sdk');
 const jwt = require('jsonwebtoken');
+const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
 require('dotenv').config();
+const User = require('../models/user');
+const rolefile = require('./role');
 
 const poolData = {
     UserPoolId: process.env.USERPOOLID,
@@ -12,6 +16,9 @@ const poolData = {
 
 exports.Validate = function(req, res, next){
     var token = req.headers['authorization'];
+    var params = {
+        AccessToken: token /* required */
+      };
 request({
        url : process.env.COGNITOURL,
        json : true
@@ -41,14 +48,36 @@ request({
                     res.status(401);
                     return res.send("Invalid token");              
                 }
-                jwt.verify(token, pem, function(err, payload) {
+                jwt.verify(token, pem, async function(err, payload) {
                     if(err) {
                         console.log("Invalid Token.");
                         res.status(401);
                         return res.send("Invalid tokern");                    
                     } else {
                          console.log("Valid Token.");
-                         return next();
+                         var cognitoidentityserviceprovider = await new AWS.CognitoIdentityServiceProvider({region : pool_region});
+                         await cognitoidentityserviceprovider.getUser(params, async function(err, data) {
+                            if (err) {
+                                res.status(401);
+                                return res.send("Error in Fetching Data");  
+                            } // an error occurred
+                            else {
+                                const phone_number = await data.UserAttributes[2].Value;
+                                await User.findAll({where: {contact: phone_number}}).then(user => {
+                                    console.log(user[0].role);
+                                    const myRole = user[0].role;
+                                    if(rolefile[myRole].find(function(allowedRoute){return req.path.startsWith(allowedRoute);})){
+                                        return next();
+                                    } else {
+                                        return res.status(401).json({
+                                            error: 'Access Denied: You dont have correct privilege to perform this operation'
+                                        });
+                                    }
+                                })
+                            }         // successful response
+                          });
+                        
+                         
                     }
                });
        } else {
