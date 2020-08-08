@@ -18,6 +18,10 @@ const { restart } = require('nodemon');
 const Project_MiniCategory_Area = require('../models/project_miniCategory_area');
 const { Op } = require("sequelize");
 const Project_User = require('../models/project_user');
+const ConstructVend_Category = require('../models/constructVend_category');
+const Project_Area = require('../models/project_area');
+const Project_Area_Mini_Mile = require('../models/project_area_mini_mile');
+const Project_Area_Minicategory = require('../models/project_area_minicategory');
 
 exports.createUser = function(body, callback){
   User.create({
@@ -36,7 +40,9 @@ exports.createUser = function(body, callback){
 exports.updateUser = function(params, body, callback){
   User.findAll({where : {contact: body.contact}}).then(user => {
     user[0].userName = body.userName,
+    user[0].name = body.name,
     user[0].role = body.role,
+    user[0].contact = body.contact,
     user[0].emergencyContact = body.emergencyContact;
     user[0].email = body.email;
     user[0].state = body.state;
@@ -72,56 +78,75 @@ exports.updateCategory = function(params, body, callback){
   }).catch(err=> {callback(err)});
 }
 
-exports.getUser = function(params, callback){
-    User.findAll({
-        where: {
-            userName: params.name
-        },
-        include: [
-          {
-            model: Category,
-            as: "categories",
-            attributes: ["id", "categoryName"],
-            through: {
-              attributes: [],
-            },
-            // through: {
-            //   attributes: ["tag_id", "tutorial_id"],
-            // },
-            include :[
-                {
-                    model: SubCategory,
-                    as: "subcategories",
-                    attributes: ["id", "subcategoryName"],
-                    include: [{
-                        model: Prerequisite,
-                        as: "prerequisites"
-                    },{
-                        model: Tutorial,
-                        as: "tutorials"
-                    }]
-                }
-            ]
+exports.getVendor = function(params, callback){
+  class Vendordetails {
+    constructor(vendor, categorydetails) {
+        this.vendor = vendor;
+        this.categorydetails = categorydetails;
+    }
+  };
+  
+  User.findAll({where:{contact: params.contact}
+  })
+    .then((user) => {
+      console.log(user);
+      ConstructVend_Category.findAll({where: {
+        userId: user[0].id
+      }
+    }).then(results=>{
+      var array = [];
+      results.forEach(element => {
+        array.push(element.categoryId);
+      });
+      console.group(array);
+        Category.findAll({
+          where : {
+            id:array
           },
-        ],
-      }).then(result => {
-            callback(null, result);
-        }
-    ).catch(err => {
-        callback(err);
+          include: [{
+            model: SubCategory,
+            as: "subcategories",
+            include: [{
+              model: Tutorial,
+              as: "tutorials"
+            },
+          {
+            model: Prerequisite,
+            as: "prerequisites"
+          }]
+          }]
+        }).then(output => {
+          User.findByPk(results[0].userId).then(user => {callback(null, new Vendordetails(user, output))}).catch();
+        }).catch(err=> {callback(err)});
+      }).catch(err=>{callback(err)});
     })
+    .catch((err) => {
+      console.log(">> Error while retrieving Tutorials: ", err);
+      return callback(err);
+    });
+}
+
+exports.getUser = function(params, callback){
+  User.findAll({where:{contact: params.contact}
+  ,include: [{all:true}]}
+  ).then((user) => {
+      callback(null, user);
+    })
+    .catch((err) => {
+      console.log(">> Error while retrieving Tutorials: ", err);
+      return callback(err);
+    });
 }
 
 exports.deleteUser = function(params, callback){
   User.destroy({
     where: {
-       id: params.id //this will be your id that you want to delete
+       contact: params.contact //this will be your id that you want to delete
     }
  }).then(result => {
    success = {
-     message: "User with userid: "+params.id+" deleted successfully"
+     message: "User with userid: "+params.contact+" deleted successfully"
    }
-   console.log(result);
    callback(null, success);
  }).catch(err => {
    callback(err);
@@ -207,7 +232,7 @@ exports.createCategory = function(body, callback){
     })
 }
 
-exports.addCategory = (body, callback) => {
+exports.addCategoryToVendor = function(body, callback){
     return User.findByPk(body.userId)
       .then((user) => {
         if (!user) {
@@ -217,41 +242,67 @@ exports.addCategory = (body, callback) => {
           }
           return callback(error);
         }
-          Category.findByPk(body.categoryId).then((category) => {
-              if (!category) {
-                console.log("Category not found!");
+          Category.findAll({
+            where : {
+              id: body.categories
+            }
+          }).then((output) => {
+              if (output.length < body.categories.length) {
+                console.log("One or more categories not found!");
                 error = {
-                    message: "Category not found!"
+                    message: "One or more categories not found!"
                 }
                 return callback(error);
               }
-              user.addCategory(category).then(result => {
-                callback(null, result);
+              output.forEach(element => {
+                user.addCategory(element).then().catch(err => {
+                  callback(err);
+                });
+              })
+              var success = {
+                message: "All categories have been added successfully"
+              }
+              callback(null, success);
               }).catch(err => {
                   return callback(err);
               });
-          });
-      })
+          })
       .catch((err) => {
-        console.log(">> Error while adding Tutorial to Tag: ", err);
+        console.log(">> Error while adding categories to user ", err);
         return callback(err);
       });
   };
 
+  exports.removeCategory = (body, callback) => {
+    ConstructVend_Category.destroy({where: {
+      userId: body.userId,
+      categoryId: {
+        [Op.or] : body.categories
+      }
+    }}).then(result => {
+      var success = {
+        message: result + " categories unmapped successfully"
+      }
+      callback(null, success);
+    }).catch(err => {
+      callback(err);
+    });
+  }
+
   exports.listCategory = (body, callback) => {
     return Category.findAll({
-      include: [
-        {
-          model: User,
-          as: "users",
-          attributes: ["id", "userName", "role"],
-          through: {
-            attributes: [],
-          }
-        },{
+      include: [{
             model: SubCategory,
             as: "subcategories",
-            attributes: ["id", "subcategoryName"]
+            attributes: ["id", "subcategoryName"],
+            include: [{
+              model: Tutorial,
+              as: "tutorials"
+            },
+            {
+              model: Prerequisite,
+              as: "prerequisites" 
+            }]
         }
       ],
     })
@@ -367,7 +418,9 @@ exports.addCategory = (body, callback) => {
 
   exports.createTool = function(body, callback){
     Tool.create({
-        toolName: body.toolName
+        toolName: body.toolName,
+        imageUrl: body.imageUrl,
+        description: body.description
     }).then(result =>{
             callback(null, result);
         }).catch(err => {
@@ -514,7 +567,7 @@ exports.addCategory = (body, callback) => {
       constructor(siterequests, supervisors, restallprojects) {
           this.siterequests = siterequests;
           this.supervisors = supervisors;
-          this.restprojects = restallprojects;
+          this.restallprojects = restallprojects;
       }
     };
     Vendor_Supervisor.findAll({
@@ -555,6 +608,7 @@ exports.addCategory = (body, callback) => {
               projects.forEach(element => {
                 projectIdArray.push(element.projectId);
               });
+              console.log(projectIdArray);
               Project.findAll({
                 where: {
                   id : projectIdArray,
@@ -639,3 +693,77 @@ exports.addCategory = (body, callback) => {
   //   });
   // }
   //All indedendent data tables
+
+  // exports.getProject = function(params, callback){
+  //   let map = new Map();
+  //   Project_Area.findAll({
+  //     where : {
+  //       projectId : params.id
+  //     }
+  //   }).then(result => {
+  //     var mySet = new Set();
+  //     result.forEach(element => {
+  //       mySet.add(element.areaId)
+  //     });
+  //     let areaArray = Array.from(mySet);
+  //     console.log(areaArray);
+  //     areaArray.forEach(element => {
+  //       Project_Area.findAll({
+  //         where : {
+  //           areaId : element,
+  //           projectId: params.id
+  //         }
+  //       }).then(result => {
+  //         result.forEach(other => {
+  //           map.set(element, other.id);
+  //           console.log(map);
+  //         });
+  //       }).catch();
+  //     });
+  //     console.log("Map before callback");
+  //     console.log(map);
+  //     callback(null, null);
+  //   }).catch(err => {
+  //     callback(err);
+  //   });
+  // }
+
+
+  exports.getProject = function(params, callback){
+    class output {
+      constructor(siteEngineer, differentAreas, minicategories) {
+        this.siteEngineer = siteEngineer;  
+        this.differentAreas = differentAreas;
+          this.minicategories = minicategories;
+      }
+    };
+    var newOutput = new output();
+    Project_User.findAll({where: {
+      projectId: params.id
+    }}).then(results=>{
+      var users = [];
+      results.forEach(element => {
+        users.push(element.userId);
+      });
+      User.findAll({where: {
+        id: users,
+        role: "SENG"
+      }}).then(outputs => {
+        newOutput.siteEngineer = outputs[0];
+      }).catch();
+    }).catch();
+    Project_Area.findAll({where:{
+      projectId: params.id
+    },include:[{all:true}]}).then(result=>{
+      newOutput.differentAreas = result;
+      Project_Area_Minicategory.findAll({where:{
+        projectareaId: [1,2]
+      },include:[{all:true}]}).then(miniresult => {
+        newOutput.minicategories = miniresult;
+        callback(null, newOutput);
+      }).catch(err => {callback(err)});
+    }).catch(
+      err=> {
+        callback(err)
+      });
+  }

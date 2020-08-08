@@ -29,7 +29,9 @@ exports.Register = function (body, callback) {
     else{
         User.create({
             contact: body.Username,
-            status : "NOT CONFIRMED"
+            status : "NOT CONFIRMED",
+            name: body.name,
+            userName: body.userName
         }).then(result =>{
                 callback(null, result);
             }).catch(err => {
@@ -105,7 +107,7 @@ exports.Login = function (body, callback) {
     })
  };
 
- exports.Delete = function (headers, body, callback) {
+ exports.Delete = function (headers, params, callback) {
      var params = {
         AccessToken: headers.authorization /* required */
       };
@@ -117,11 +119,11 @@ exports.Login = function (body, callback) {
         else{
             User.destroy({
                 where: {
-                   userName: body.Username //this will be your id that you want to delete
+                   contact: params.contact //this will be your id that you want to delete
                 }
              }).then(result => {
                success = {
-                 message: "User with phone number: "+body.Username+" deleted successfully"
+                 message: "User with phone number: "+params.contact+" deleted successfully"
                }
                console.log(result);
                callback(null, success);

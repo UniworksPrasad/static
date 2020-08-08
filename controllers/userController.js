@@ -36,6 +36,15 @@ exports.updateCategory = function(req, res){
     })
 }
 
+exports.getVendor = function(req, res){
+    const getUser = userService.getVendor(req.params, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
 exports.getUser = function(req, res){
     const getUser = userService.getUser(req.params, function(err, result){
         if(err){
@@ -54,8 +63,17 @@ exports.deleteUser = function(req, res){
     })
 }
 
-exports.addCategory = function(req, res){
-    const createUser = userService.addCategory(req.body, function(err, result){
+exports.addCategoryToVendor = function(req, res){
+    const createUser = userService.addCategoryToVendor(req.body, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.removeCategory = function(req, res){
+    const createUser = userService.removeCategory(req.body, function(err, result){
         if(err){
             res.send(err);
         }
@@ -176,6 +194,15 @@ exports.createArea = function(req, res){
 
   exports.createProject = function(req, res){
     const createUser = userService.createProject(req.body, function(err, result){
+        if(err){
+            res.send(err);
+        }
+        res.send(result);
+    })
+  }
+
+  exports.getProject = function(req, res){
+    const createUser = userService.getProject(req.params, function(err, result){
         if(err){
             res.send(err);
         }

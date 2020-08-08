@@ -33,7 +33,7 @@ exports.login = function(req, res){
  }
 
  exports.delete = function(req, res){
-    let login = authService.Delete(req.headers, req.body, function(err, result){
+    let login = authService.Delete(req.headers, req.params, function(err, result){
         if(err)
            res.send(err)
         res.send(result);

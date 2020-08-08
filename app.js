@@ -31,6 +31,9 @@ const ConstructVend_Category = require('./models/constructVend_category');
 const Project_User = require('./models/project_user');
 const User = require('./models/user');
 const Vendor_Supervisor = require('./models/vendor_supervisor');
+const Project_Area = require('./models/project_area');
+const Project_Area_Minicategory = require('./models/project_area_minicategory');
+const Project_Area_Mini_Mile = require('./models/project_area_mini_mile');
 
 connection
   .authenticate()
@@ -97,17 +100,17 @@ Project.belongsTo(SubCategory);
 Project.belongsToMany(User, { through: Project_User, as: 'users', foreignKey: "projectId" }, {onDelete: 'cascade'});
 User.belongsToMany(Project, { through: Project_User, as: 'projects', foreignKey: "userId" }, {onDelete: 'cascade'});
 
-Project_MiniCategory.belongsToMany(Area, { through: Project_MiniCategory_Area, as: 'projectminicategoryareas', foreignKey: "projectMiniCategoryId" });
-Area.belongsToMany(Project_MiniCategory, { through: Project_MiniCategory_Area, as: 'areaprojectminicategories', foreignKey: "areaId" });
+// Project_MiniCategory.belongsToMany(Area, { through: Project_MiniCategory_Area, as: 'projectminicategoryareas', foreignKey: "projectMiniCategoryId" });
+// Area.belongsToMany(Project_MiniCategory, { through: Project_MiniCategory_Area, as: 'areaprojectminicategories', foreignKey: "areaId" });
 
-Project_MiniCategory_Area.belongsToMany(Milestone, { through: Project_MiniCategory_Area_Milestone, as: 'projectminicategoryareamilestones', foreignKey: "projectMiniAreaId" });
-Milestone.belongsToMany(Project_MiniCategory_Area, { through: Project_MiniCategory_Area_Milestone, as: 'milestoneprojectminicategories', foreignKey: "milestoneId" });
+// Project_MiniCategory_Area.belongsToMany(Milestone, { through: Project_MiniCategory_Area_Milestone, as: 'projectminicategoryareamilestones', foreignKey: "projectMiniAreaId" });
+// Milestone.belongsToMany(Project_MiniCategory_Area, { through: Project_MiniCategory_Area_Milestone, as: 'milestoneprojectminicategories', foreignKey: "milestoneId" });
 
-Project_MiniCategory_Area.hasMany(ProjectAreaPlan, {as: "projectminicategoryareaplans"});
-ProjectAreaPlan.belongsTo(Project_MiniCategory_Area);
+// Project_MiniCategory_Area.hasMany(ProjectAreaPlan, {as: "projectminicategoryareaplans"});
+// ProjectAreaPlan.belongsTo(Project_MiniCategory_Area);
 
-Project_MiniCategory_Area.hasMany(ProjectAreaIssue, {as: "projectminicategoryareaissues"});
-ProjectAreaIssue.belongsTo(Project_MiniCategory_Area);
+// Project_MiniCategory_Area.hasMany(ProjectAreaIssue, {as: "projectminicategoryareaissues"});
+// ProjectAreaIssue.belongsTo(Project_MiniCategory_Area);
 
 ProjectAreaIssue.hasMany(ProjectAreaIssueComment, {as: "projectareacomments"});
 ProjectAreaIssueComment.belongsTo(ProjectAreaIssue);
@@ -115,7 +118,19 @@ ProjectAreaIssueComment.belongsTo(ProjectAreaIssue);
 User.hasMany(ProjectAreaIssueComment, {as: "projectareacomments"}, {onDelete: 'cascade'});
 ProjectAreaIssueComment.belongsTo(User);
 
-connection.sync({force: false}).then(result=>{
+Project.belongsToMany(Area, { through: Project_Area, as: 'areas', foreignKey: "projectId" }, {onDelete: 'cascade'});
+Area.belongsToMany(Project, { through: Project_Area, as: 'projects', foreignKey: "areaId" }, {onDelete: 'cascade'});
+
+Project_Area.belongsToMany(MiniCategory, { through: Project_Area_Minicategory, as: 'minicategories', foreignKey: "projectareaId" }, {onDelete: 'cascade'});
+MiniCategory.belongsToMany(Project_Area, { through: Project_Area_Minicategory, as: 'projectareas', foreignKey: "minicategoryId" }, {onDelete: 'cascade'});
+
+Project_Area.hasMany(ProjectAreaPlan, {as: "projectareaplans"});
+ProjectAreaPlan.belongsTo(Project_Area);
+
+Project_Area_Minicategory.belongsToMany(Milestone, { through: Project_Area_Mini_Mile, as: 'milestones', foreignKey: "projectareaminiId" }, {onDelete: 'cascade'});
+Milestone.belongsToMany(Project_Area_Minicategory, { through: Project_Area_Mini_Mile, as: 'projectareaminis', foreignKey: "milestoneId" }, {onDelete: 'cascade'});
+
+connection.sync({force: true}).then(result=>{
     console.log("Database synched successfully!!!");
 }).catch(err=>{
     console.log(err);

@@ -41,7 +41,7 @@ const upload = multer({
 
 router.post('/auth/register', authController.register);
 router.post('/auth/login', authController.login);
-router.delete('/auth/user', authController.delete);
+router.delete('/auth/user/:contact', authController.delete);
 router.post('/auth/validate', authController.validate_token);
 router.post('/auth/confirmSignup', authController.confirmSignUp);
 router.get('/auth/listUsers', authController.listUsers);
@@ -64,15 +64,19 @@ const userController = require('./controllers/userController');
 
 router.post('/user', userController.createUser);
 router.put('/user/:id', userController.updateUser);
+router.get('/user', userController.listUser);
+router.get('/user/profile/:contact', userController.getUser);
+router.delete('/user/:contact', userController.deleteUser);
 router.put('/addsupervisor', userController.addSupervisor);
 router.delete('/removesupervisor', userController.removeSupervisor);
 router.post('/requestsupervisor', userController.requestSupervisor);
 router.post('/category', userController.createCategory);
-router.put('/category/:id', userController.updateCategory);
-router.post('/addcategory', userController.addCategory);
 router.get('/category', userController.listCategory);
-router.get('/user', userController.listUser);
-router.get('/user/:name', userController.getUser);
+router.put('/category/:id', userController.updateCategory);
+router.post('/vendor/addcategory', userController.addCategoryToVendor);
+router.delete('/removecategory', userController.removeCategory);
+router.get('/category', userController.listCategory);
+router.get('/vendor/:contact', userController.getVendor);
 router.post('/subcategory', userController.createSubCategory);
 router.get('/subcategory', userController.listSubCategory);
 router.get('/supervisor/:projectId', userController.getSupProjectDetails);
@@ -84,6 +88,7 @@ router.post('/tutorial', userController.createTutorial);
 router.post('/tool', userController.createTool);
 router.post('/resource', userController.createResource);
 router.post('/project', userController.createProject);
+router.get('/project/:id', userController.getProject);
 router.post('/minicategory', userController.createMiniCategory);
 router.post('/prerequisite', userController.createPrerequisite);
 router.post('/projectplan', userController.createProjectPlan);
@@ -95,6 +100,11 @@ router.post('/milestone', userController.createMilestone);
 ///siteRequest/:projectId
 router.get('/siteRequest/:projectId', userController.getSiteRequest);
 router.get('/notifications/:userId', userController.getNotifications);
+
+router.get('/vendor/hello')
+router.get('/supervisor/hello')
+router.get('/customer/hello')
+router.get('/admin/hello')
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 

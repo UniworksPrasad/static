@@ -15,6 +15,7 @@ const User = connection.define('User', {
         unique: true
     },
     contact: Sequelize.STRING,
+    name: Sequelize.STRING,
     role: Sequelize.STRING,
     emergencyContact: Sequelize.STRING,
     email: Sequelize.STRING,
