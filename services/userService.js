@@ -617,7 +617,12 @@ exports.addCategory = (body, callback) => {
     return Area.findAll({
       where: {
         id: params.id
-      }
+      },include: [
+        {
+          all:true,
+          attributes: ["description", "startDate", "endDate", "address", "zip", "lat", "long", "totalArea", "areaCompleted", "budget", "skilled", "semiSkilled", "unSkilled", "status"],
+        }
+      ],
     })
       .then((tags) => {
         return callback(tags);
@@ -653,7 +658,13 @@ exports.addCategory = (body, callback) => {
     return Tutorial.findAll({
       where: {
         id: params.id
-      }
+      },include: [
+        {
+          all:true,
+          attributes: ["subcategoryName", "description"],
+        }
+      ],
+      
     })
       .then((tags) => {
         return callback(tags);
@@ -668,7 +679,12 @@ exports.addCategory = (body, callback) => {
     return Tool.findAll({
       where: {
         id: params.id
-      }
+      },include: [
+        {
+          all:true,
+          attributes: ["subcategoryName", "description"],
+        }
+      ],
     })
       .then((tags) => {
         return callback(tags);
@@ -773,7 +789,12 @@ exports.addCategory = (body, callback) => {
     return Milestone.findAll({
       where: {
         id: params.id
-      }
+      },include: [
+        {
+          all:true,
+          // attributes: ["subcategoryName", "description"],
+        }
+      ],
     })
       .then((tags) => {
         return callback(tags);
