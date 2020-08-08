@@ -130,11 +130,11 @@ ProjectAreaPlan.belongsTo(Project_Area);
 Project_Area_Minicategory.belongsToMany(Milestone, { through: Project_Area_Mini_Mile, as: 'milestones', foreignKey: "projectareaminiId" }, {onDelete: 'cascade'});
 Milestone.belongsToMany(Project_Area_Minicategory, { through: Project_Area_Mini_Mile, as: 'projectareaminis', foreignKey: "milestoneId" }, {onDelete: 'cascade'});
 
-connection.sync({force: true}).then(result=>{
-    console.log("Database synched successfully!!!");
-}).catch(err=>{
-    console.log(err);
-});
+// connection.sync({force: false}).then(result=>{
+//     console.log("Database synched successfully!!!");
+// }).catch(err=>{
+//     console.log(err);
+// });
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());

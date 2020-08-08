@@ -766,3 +766,23 @@ exports.addCategoryToVendor = function(body, callback){
         callback(err)
       });
   }
+
+  exports.listSupervisors = function(params, callback){
+    Vendor_Supervisor.findAll({where:{
+      vendorId: params.id
+    }}).then(result => {
+      var array = [];
+      result.forEach(element =>{
+        array.push(element.supervisorId);
+      });
+      User.findAll({where:{
+        id: array
+      },include: [{model: User, as:"supervisors"}]}).then(result => {
+        callback(null, result);
+      }).catch(err => {
+        callback(err);
+      });
+    }).catch(err => {
+      callback(err);
+    });
+  }

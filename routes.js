@@ -65,6 +65,7 @@ const userController = require('./controllers/userController');
 router.post('/user', userController.createUser);
 router.put('/user/:id', userController.updateUser);
 router.get('/user', userController.listUser);
+router.get('/user/supervisors/:id', userController.listSupervisors);
 router.get('/user/profile/:contact', userController.getUser);
 router.delete('/user/:contact', userController.deleteUser);
 router.put('/addsupervisor', userController.addSupervisor);
