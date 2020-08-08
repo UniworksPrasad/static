@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const aws = require( 'aws-sdk' );
-const multerS3 = require( 'multer-s3' );
+const aws = require('aws-sdk');
+const multerS3 = require('multer-s3');
 const multer = require('multer');
-const path = require( 'path' );
+const path = require('path');
 require('dotenv').config();
 
 const s3 = new aws.S3({
@@ -18,10 +18,10 @@ var authMiddleware = require('./middleware/AuthMiddleware');
 var userControlleraws = require('./controllers/userControllers/UserController');
 
 const fileFilter = (req, file, cb) => {
-    if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png')
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png')
         cb(null, true);
     else
-        cb('only images' , false);
+        cb('only images', false);
 };
 
 const upload = multer({
@@ -30,12 +30,12 @@ const upload = multer({
         bucket: process.env.BUCKETNAME,
         acl: 'public-read',
         key: function (req, file, cb) {
-            cb(null, "users-aadhar/" + path.basename( file.originalname, path.extname( file.originalname ) ) + '-' + Date.now() + path.extname( file.originalname ) )
+            cb(null, "users-aadhar/" + path.basename(file.originalname, path.extname(file.originalname)) + '-' + Date.now() + path.extname(file.originalname))
         }
     }),
     limits: {
-    fileSize: 1024*1024*5 
-    }, 
+        fileSize: 1024 * 1024 * 5
+    },
     fileFilter: fileFilter
 });
 
@@ -50,7 +50,7 @@ router.post('/auth/resendOTP', authController.resendOTP);
 //forget password
 router.post('/auth/forgetPassword', authController.forgetPassword);
 //change password
-router.post('/auth/changePassword', authMiddleware.Validate , authController.changePassword);
+router.post('/auth/changePassword', authMiddleware.Validate, authController.changePassword);
 //upload Image
 router.post('/auth/uploadImage', upload.single('aadharImage'), authController.uploadImage);
 

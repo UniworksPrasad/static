@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 const connection = require('../utils/connection');
 
 const ProjectAreaIssue = connection.define('ProjectAreaIssue', {
-    id:{
+    id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         allowNull: false,
@@ -10,7 +10,7 @@ const ProjectAreaIssue = connection.define('ProjectAreaIssue', {
     },
     description: Sequelize.TEXT,
     status: Sequelize.STRING
-},{
+}, {
     timestamps: false
 });
 

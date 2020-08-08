@@ -1,5 +1,5 @@
-module.exports={
-    CSVD: ["/vendor","/supervisor","/user"],
+module.exports = {
+    CSVD: ["/vendor", "/supervisor", "/user"],
     CSVS: ["/supervisor"],
     CUST: ["/customer"],
     ADMN: ["/admin"],

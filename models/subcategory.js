@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 const connection = require('../utils/connection');
 
 const SubCategory = connection.define('SubCategory', {
-    id:{
+    id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         allowNull: false,
@@ -10,10 +10,8 @@ const SubCategory = connection.define('SubCategory', {
     },
     subcategoryName: Sequelize.STRING,
     description: Sequelize.TEXT
-},{
+}, {
     timestamps: false
 });
 
 module.exports = SubCategory;
-
-//Wooden Partition

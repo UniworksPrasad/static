@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 const connection = require('../utils/connection');
 
 const Tutorial = connection.define('Tutorial', {
-    id:{
+    id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         allowNull: false,
@@ -12,7 +12,7 @@ const Tutorial = connection.define('Tutorial', {
     videoLink: Sequelize.STRING,
     description: Sequelize.TEXT,
     thumbnail: Sequelize.STRING
-},{
+}, {
     timestamps: false
 });
 

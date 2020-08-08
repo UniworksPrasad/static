@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 const connection = require('../utils/connection');
 
 const Project_Area = connection.define('Project_Area', {
-    id:{
+    id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         allowNull: false,
@@ -22,7 +22,7 @@ const Project_Area = connection.define('Project_Area', {
     semiSkilled: Sequelize.INTEGER,
     unSkilled: Sequelize.INTEGER,
     status: Sequelize.STRING
-},{
+}, {
     timestamps: false
 });
 

@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 const connection = require('../utils/connection');
 
 const Tool = connection.define('Tool', {
-    id:{
+    id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         allowNull: false,
@@ -11,10 +11,8 @@ const Tool = connection.define('Tool', {
     toolName: Sequelize.STRING,
     imageUrl: Sequelize.STRING,
     description: Sequelize.TEXT
-},{
+}, {
     timestamps: false
 });
 
 module.exports = Tool;
-
-//Carpentry

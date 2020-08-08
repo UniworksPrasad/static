@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 const connection = require('../utils/connection');
 
 const MiniCategory = connection.define('MiniCategory', {
-    id:{
+    id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         allowNull: false,
@@ -12,10 +12,8 @@ const MiniCategory = connection.define('MiniCategory', {
     description: Sequelize.TEXT,
     predecessor: Sequelize.TEXT,
     successor: Sequelize.TEXT
-},{
+}, {
     timestamps: false
 });
 
 module.exports = MiniCategory;
-
-//Partion - Cutting and Preparing

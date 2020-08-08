@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 const connection = require('../utils/connection');
 
 const User = connection.define('User', {
-    id:{
+    id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         allowNull: true,
@@ -36,7 +36,7 @@ const User = connection.define('User', {
     PAN: Sequelize.STRING,
     aadharLink: Sequelize.STRING,
     GSTIN: Sequelize.STRING
-},{
+}, {
     timestamps: false
 });
 

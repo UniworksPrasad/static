@@ -2,14 +2,14 @@ const Sequelize = require('sequelize');
 const connection = require('../utils/connection');
 
 const Project_Area_Minicategory = connection.define('Project_Area_Minicategory', {
-    id:{
+    id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         allowNull: false,
         primaryKey: true
     },
     status: Sequelize.STRING
-},{
+}, {
     timestamps: false
 });
 
