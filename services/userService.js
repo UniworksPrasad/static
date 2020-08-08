@@ -14,7 +14,6 @@ const Milestone = require('../models/milestone');
 const ProjectAreaPlan = require('../models/projectAreaPlan');
 const Vendor_Supervisor = require('../models/vendor_supervisor');
 const Project_MiniCategory = require('../models/project_miniCategory');
-const { restart } = require('nodemon');
 const Project_MiniCategory_Area = require('../models/project_miniCategory_area');
 const { Op } = require("sequelize");
 const Project_User = require('../models/project_user');
