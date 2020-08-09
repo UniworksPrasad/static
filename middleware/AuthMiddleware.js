@@ -72,7 +72,7 @@ exports.Validate = function (req, res, next) {
                             }).then(user => {
                                 console.log(user[0].role);
                                 const myRole = user[0].role;
-                                if (rolefile[mqyRole].find(function (allowedRoute) {
+                                if (rolefile[myRole].find(function (allowedRoute) {
                                         return req.path.startsWith(allowedRoute);
                                     })) {
                                     return next();
@@ -84,8 +84,6 @@ exports.Validate = function (req, res, next) {
                             })
                         }
                     });
-
-
                 }
             });
         } else {

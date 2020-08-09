@@ -51,6 +51,7 @@ exports.updateUser = function (params, body, callback) {
       user[0].emergencyContact = body.emergencyContact;
     user[0].email = body.email;
     user[0].state = body.state;
+    user[0].city = body.city;
     user[0].area = body.area;
     user[0].street = body.street;
     user[0].building = body.building;
