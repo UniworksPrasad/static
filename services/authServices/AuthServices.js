@@ -230,6 +230,26 @@ exports.Login = function (body, callback) {
       });
  };
 
+ exports.ConfirmForgetPassword = function (body, callback) {
+    var params = {
+        ClientId: poolData.ClientId, /* required */
+        Username: body.Username, /* required */
+        ConfirmationCode: body.ConfirmationCode, /* required */
+        Password: body.Password, /* required */
+      };
+      var cognitoidentityserviceprovider = new AWS.CognitoIdentityServiceProvider({region : pool_region});
+      cognitoidentityserviceprovider.confirmForgotPassword(params, function(err, data) {
+        if (err){
+            console.log(err, err.stack);
+            callback(err);
+        } // an error occurred
+        else{
+            console.log(data);
+            callback(null, data);
+        } // successful response
+      });
+ };
+
  exports.ChangePassword = function (body, token, callback) {
     var params = {
         AccessToken: token,

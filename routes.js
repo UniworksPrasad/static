@@ -50,6 +50,8 @@ router.get('/auth/listUsers', authController.listUsers);
 router.post('/auth/resendOTP', authController.resendOTP);
 //forget password
 router.post('/auth/forgetPassword', authController.forgetPassword);
+//forget password
+router.post('/auth/confirmForgetPassword', authController.confirmForgetPassword);
 //change password
 router.post('/auth/changePassword', authMiddleware.Validate , authController.changePassword);
 //upload Image
@@ -120,6 +122,6 @@ router.get('/notifications/:userId', userController.getNotifications);
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 //Authorized Route
-router.get('/area/:id', authMiddleware.Validate, userController.getAreaById);
+router.get('/area/:id', userController.getAreaById);
 
 module.exports = router;
