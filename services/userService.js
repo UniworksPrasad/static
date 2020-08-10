@@ -23,6 +23,7 @@ const ConstructVend_Category = require('../models/constructVend_category');
 const Project_Area = require('../models/project_area');
 const Project_Area_Mini_Mile = require('../models/project_area_mini_mile');
 const Project_Area_Minicategory = require('../models/project_area_minicategory');
+const { ElastiCache } = require('aws-sdk');
 
 exports.createUser = function (body, callback) {
   User.create({
@@ -65,10 +66,30 @@ exports.updateUser = function (params, body, callback) {
     user[0].IFSC = body.IFSC;
     user[0].accountHolder = body.accountHolder;
     user[0].PAN = body.PAN;
+    user[0].aadharNum = body.aadharNum;
     user[0].aadharLink = body.aadharLink;
     user[0].GSTIN = body.GSTIN;
     user[0].save().then(result => {
-      callback(result);
+      if(body.role == "CSVD"){
+        Vendor_Supervisor.findAll({where:{
+          supervisorId: user[0].id
+        }}).then(entry => {
+          if(entry.length == 0){
+            Vendor_Supervisor.create({
+              vendorId: user[0].id,
+              supervisorId: user[0].id,
+              status: "C"
+            }).then(callback(null, result)).catch(err => {
+              callback(err);
+            });
+          }
+          else
+            callback(null, result);
+        }).catch(err => {
+          callback(err);
+        })
+      }else
+      callback(null, result);
     }).catch(err => {
       callback(err);
     });

@@ -9,7 +9,6 @@ const User = connection.define('User', {
         primaryKey: true
     },
     userName: {
-        // needs to be unique
         type: Sequelize.STRING,
         allowNull: true,
         unique: true
@@ -34,6 +33,7 @@ const User = connection.define('User', {
     IFSC: Sequelize.STRING,
     accountHolder: Sequelize.STRING,
     PAN: Sequelize.STRING,
+    aadharNum: Sequelize.STRING,
     aadharLink: Sequelize.STRING,
     GSTIN: Sequelize.STRING
 }, {

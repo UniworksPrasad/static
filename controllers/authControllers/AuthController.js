@@ -12,7 +12,9 @@ exports.confirmSignUp = function (req, res) {
     let confirmSignUp = authService.ConfirmSignUp(req.body, function (err, result) {
         if (err)
             res.send(err);
-        res.send(result);
+        res.status(200).json({
+            accessToken: result
+        });
     })
 }
 
@@ -27,8 +29,10 @@ exports.listUsers = function (req, res) {
 exports.login = function (req, res) {
     let login = authService.Login(req.body, function (err, result) {
         if (err)
-            res.send(err)
-        res.send(result);
+            res.send(err);
+        res.status(200).json({
+            accessToken: result
+        });
     })
 }
 
