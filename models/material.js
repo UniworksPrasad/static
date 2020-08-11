@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 const connection = require('../utils/connection');
 
 const Material = connection.define('Material', {
-    id:{
+    id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         allowNull: false,
@@ -12,10 +12,8 @@ const Material = connection.define('Material', {
     description: Sequelize.STRING,
     imageUrl: Sequelize.STRING,
     uom: Sequelize.STRING
-},{
+}, {
     timestamps: false
 });
 
 module.exports = Material;
-
-//Carpentry

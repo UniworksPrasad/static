@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 const connection = require('../utils/connection');
 
 const Project_Mini_Area_Mile = connection.define('Project_Mini_Area_Mile', {
-    id:{
+    id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         allowNull: false,
@@ -10,7 +10,7 @@ const Project_Mini_Area_Mile = connection.define('Project_Mini_Area_Mile', {
     },
     status: Sequelize.STRING,
     imageUrl: Sequelize.STRING
-},{
+}, {
     timestamps: false
 });
 

@@ -1,14 +1,13 @@
 const Sequelize = require('sequelize');
 const connection = require('../utils/connection');
 
-const Project = connection.define('Project', {
+const Project_Area = connection.define('Project_Area', {
     id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         allowNull: false,
         primaryKey: true
     },
-    bookingId: Sequelize.STRING,
     description: Sequelize.STRING,
     startDate: Sequelize.DATEONLY,
     endDate: Sequelize.DATEONLY,
@@ -27,4 +26,4 @@ const Project = connection.define('Project', {
     timestamps: false
 });
 
-module.exports = Project;
+module.exports = Project_Area;

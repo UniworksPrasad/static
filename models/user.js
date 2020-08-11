@@ -2,14 +2,19 @@ const Sequelize = require('sequelize');
 const connection = require('../utils/connection');
 
 const User = connection.define('User', {
-    id:{
+    id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
-        allowNull: false,
+        allowNull: true,
         primaryKey: true
     },
-    userName: Sequelize.STRING,
+    userName: {
+        type: Sequelize.STRING,
+        allowNull: true,
+        unique: true
+    },
     contact: Sequelize.STRING,
+    name: Sequelize.STRING,
     role: Sequelize.STRING,
     emergencyContact: Sequelize.STRING,
     email: Sequelize.STRING,
@@ -19,6 +24,7 @@ const User = connection.define('User', {
     street: Sequelize.STRING,
     building: Sequelize.STRING,
     flat: Sequelize.STRING,
+    zip: Sequelize.INTEGER,
     lat: Sequelize.STRING,
     long: Sequelize.STRING,
     agreement: Sequelize.TEXT,
@@ -27,9 +33,10 @@ const User = connection.define('User', {
     IFSC: Sequelize.STRING,
     accountHolder: Sequelize.STRING,
     PAN: Sequelize.STRING,
+    aadharNum: Sequelize.STRING,
     aadharLink: Sequelize.STRING,
     GSTIN: Sequelize.STRING
-},{
+}, {
     timestamps: false
 });
 

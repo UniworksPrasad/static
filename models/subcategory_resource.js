@@ -2,13 +2,13 @@ const Sequelize = require('sequelize');
 const connection = require('../utils/connection');
 
 const SubCategory_Resource = connection.define('SubCategory_Resource', {
-    id:{
+    id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         allowNull: false,
         primaryKey: true
     }
-},{
+}, {
     timestamps: false
 });
 
