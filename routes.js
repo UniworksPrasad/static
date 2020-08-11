@@ -4,6 +4,7 @@ const aws = require('aws-sdk');
 const multerS3 = require('multer-s3');
 const multer = require('multer');
 const path = require('path');
+var authMiddleware = require('./middleware/AuthMiddleware');
 require('dotenv').config();
 
 const s3 = new aws.S3({
@@ -49,6 +50,8 @@ router.get('/auth/listUsers', authController.listUsers);
 router.post('/auth/resendOTP', authController.resendOTP);
 //forget password
 router.post('/auth/forgetPassword', authController.forgetPassword);
+//forget password
+router.post('/auth/confirmForgetPassword', authController.confirmForgetPassword);
 //change password
 router.post('/auth/changePassword', authMiddleware.Validate, authController.changePassword);
 //upload Image
@@ -96,6 +99,31 @@ router.post('/projectplan', userController.createProjectPlan);
 router.post('/projectareaplan', userController.createProjectAreaPlan);
 router.post('/milestone', userController.createMilestone);
 
+router.get('/area', userController.getArea);
+router.get('/material', userController.getMaterial);
+router.get('/tutorial', userController.getTutorial);
+router.get('/tool', userController.getTool);
+router.get('/resource', userController.getResource);
+router.get('/project', userController.getProject);
+router.get('/minicategory', userController.getMiniCategory);
+router.get('/prerequisite', userController.getPrerequisite);
+router.get('/projectplan', userController.getProjectPlan);
+router.get('/projectareaplan', userController.getProjectAreaPlan);
+router.get('/milestone', userController.getMilestone);
+
+//Get route with specific ID
+
+// router.get('/area/:id', userController.getAreaById);
+router.get('/material/:id', userController.getMaterialById);
+router.get('/tutorial/:id', userController.getTutorialById);
+router.get('/tool/:id', userController.getToolById);
+router.get('/resource/:id', userController.getResourceById);
+router.get('/project/:id', userController.getProjectById);
+router.get('/minicategory/:id', userController.getMiniCategoryById);
+router.get('/prerequisite/:id', userController.getPrerequisiteById);
+router.get('/projectplan/:id', userController.getProjectPlanById);
+router.get('/projectareaplan/:id', userController.getProjectAreaPlanById);
+router.get('/milestone/:id', userController.getMilestoneById);
 //router.get('/siteRequest/:projectId', userController.siteRequest);
 //router.get('/getSupervisors/:vendorId', userController.getSupervisors);
 ///siteRequest/:projectId
@@ -108,7 +136,7 @@ router.get('/customer/hello')
 router.get('/admin/hello')
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-
-
+//Authorized Route
+router.get('/area/:id', userController.getAreaById);
 
 module.exports = router;
