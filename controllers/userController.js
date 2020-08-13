@@ -288,6 +288,33 @@ exports.getSupProjectDetails = function (req, res) {
         res.send(result);
     })
 }
+
+exports.getAllProjectDetails = function (req, res) {
+    const getArea = userService.getAllProjectDetails(req.params, function (err, result) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getAllVendorProjectDetails = function (req, res) {
+    const getArea = userService.getAllVendorProjectDetails(req.params, function (err, result) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getVendorProjectDetails = function (req, res) {
+    const getArea = userService.getVendorProjectDetails(req.params, function (err, result) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
 //All indedendent data tables
 
 exports.getUser = function (req, res) {
@@ -496,3 +523,4 @@ exports.getMilestoneById = function (req, res) {
         res.send(result);
     })
 }
+
