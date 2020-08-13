@@ -4,6 +4,8 @@ const aws = require('aws-sdk');
 const multerS3 = require('multer-s3');
 const multer = require('multer');
 const path = require('path');
+const {check} = require('express-validator');
+const validate = require('./middleware/validate');
 var authMiddleware = require('./middleware/AuthMiddleware');
 require('dotenv').config();
 
@@ -40,20 +42,42 @@ const upload = multer({
     fileFilter: fileFilter
 });
 
-router.post('/auth/register', authController.register);
-router.post('/auth/login', authController.login);
+router.post('/auth/register', [
+    check('Username').notEmpty().withMessage('Username is required'),
+    check('Phone_number').notEmpty().isNumeric().withMessage('Phone_number is required'),
+    check('Password').notEmpty().withMessage('Password is required'),
+], validate, authController.register);
+router.post('/auth/login', [
+    check('Username').notEmpty().withMessage('Username is required'),
+    check('Password').notEmpty().withMessage('Password is required'),
+], validate, authController.login);
 router.delete('/auth/user/:contact', authController.delete);
 router.post('/auth/validate', authController.validate_token);
-router.post('/auth/confirmSignup', authController.confirmSignUp);
+router.post('/auth/confirmSignup', [ 
+    check('Username').notEmpty().withMessage('Username is required'),
+    check('ConfirmationCode').notEmpty().isNumeric().withMessage('ConfirmationCode is required'),
+    check('Password').notEmpty().withMessage('Password is required'),
+], validate, authController.confirmSignUp);
 router.get('/auth/listUsers', authController.listUsers);
 //resent OTP
-router.post('/auth/resendOTP', authController.resendOTP);
+router.post('/auth/resendOTP', [ 
+    check('Username').notEmpty().withMessage('Username is required'),
+], validate, authController.resendOTP);
 //forget password
-router.post('/auth/forgetPassword', authController.forgetPassword);
+router.post('/auth/forgetPassword', [ 
+    check('Username').notEmpty().withMessage('New Password is required'),
+], validate, authController.forgetPassword);
 //forget password
-router.post('/auth/confirmForgetPassword', authController.confirmForgetPassword);
+router.post('/auth/confirmForgetPassword', [ 
+    check('Username').notEmpty().withMessage('Username is required'),
+    check('ConfirmationCode').notEmpty().isNumeric().withMessage('ConfirmationCode is required'),
+    check('Password').notEmpty().withMessage('Password is required'),
+], validate, authController.confirmForgetPassword);
 //change password
-router.post('/auth/changePassword', authMiddleware.Validate, authController.changePassword);
+router.post('/auth/changePassword', [ 
+    check('ProposedPassword').notEmpty().withMessage('New Password is required'),
+    check('PreviousPassword').notEmpty().withMessage('Previous Password is required'),
+], validate, authMiddleware.Validate, authController.changePassword);
 //upload Image
 router.post('/auth/uploadImage', upload.single('aadharImage'), authController.uploadImage);
 
@@ -64,8 +88,9 @@ router.put('/user/updateAttributes', authMiddleware.Validate, authController.upd
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 const userController = require('./controllers/userController');
-
+//create User
 router.post('/user', userController.createUser);
+
 router.put('/user/:id', userController.updateUser);
 router.get('/user', userController.listUser);
 router.get('/user/supervisors/:id', userController.listSupervisors);
@@ -84,6 +109,12 @@ router.get('/vendor/:contact', userController.getVendor);
 router.post('/subcategory', userController.createSubCategory);
 router.get('/subcategory', userController.listSubCategory);
 router.get('/supervisor/:projectId', userController.getSupProjectDetails);
+
+//Project 
+router.get('/vendor/project/:projectId', userController.getAllProjectDetails);
+//Project Area
+router.get('/vendor/projectArea/:projectId', userController.getAllVendorProjectDetails);
+router.get('/vendor/projectArea/:projectId/:areaId', userController.getVendorProjectDetails);
 
 
 router.post('/area', userController.createArea);
