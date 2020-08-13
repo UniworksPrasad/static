@@ -15,6 +15,7 @@ const ProjectAreaPlan = require('../models/projectAreaPlan');
 const Vendor_Supervisor = require('../models/vendor_supervisor');
 const Project_MiniCategory = require('../models/project_miniCategory');
 const Project_MiniCategory_Area = require('../models/project_miniCategory_area');
+const ProjectAreaMiniMiles = require('../models/project_area_mini_mile');
 
 
 const {
@@ -1031,6 +1032,114 @@ exports.getSupProjectDetails = function (params, callback) {
     callback(err)
   });
 }
+
+exports.getAllProjectDetails = async function (params, callback) {
+  const project = await Project.findAll({
+    where: {
+      id: params.projectId
+    }
+  });
+  const CategoryId = project[0].CategoryId;
+  const SubCategoryId = project[0].SubCategoryId;
+  const category = await Category.findAll({
+    where: {
+      id: CategoryId
+    }
+  });
+  const subCategory = await SubCategory.findAll({
+    where: {
+      id:SubCategoryId
+    }
+  });
+  
+      // console.log(miniCategory[0].miniCategoryName, milestone[0], projectAreaMiniMiles[0], prerequisite[0]);
+      const result = {
+        project: project[0],
+        category: category[0],
+        subCategory: subCategory[0],
+      }
+      callback(null, result);
+    }
+
+exports.getAllVendorProjectDetails = async function (params, callback) {
+  const projectArea = await Project_Area.findAll({
+    where: {
+      projectId: params.projectId
+    }
+  });
+      const result = {
+        projectArea: projectArea,
+      }
+      callback(null, result);
+    }
+
+
+exports.getVendorProjectDetails = async function (params, callback) {
+  const projectArea = await Project_Area.findAll({
+    where: {
+      projectId: params.projectId,
+      areaId: params.areaId
+    }
+  });
+  const projectAreaId = projectArea[0].id;
+  const projectAreaMinicategory = await Project_Area_Minicategory.findAll({
+    where: {
+      projectareaId: projectAreaId,
+      status : 'Process' 
+    }
+  });
+
+  const miniCategoryId = projectAreaMinicategory[0].minicategoryId;
+
+      const miniCategory = await MiniCategory.findAll({
+        where: {
+          id: miniCategoryId
+        }
+      });
+      const milestone = await Milestone.findAll({
+        where: {
+          MiniCategoryId: miniCategoryId
+        }
+      })
+      const projectAreaMiniMiles = await ProjectAreaMiniMiles.findAll({
+        where: {
+          projectareaminiId : projectAreaMinicategory[0].id,
+          milestoneId: milestone[0].id
+        }
+      })
+      const prerequisite = await Prerequisite.findAll({
+        where: {
+          SubCategoryId: miniCategory[0].SubCategoryId
+        }
+      })
+      console.log(miniCategory[0].miniCategoryName, milestone[0], projectAreaMiniMiles[0], prerequisite[0]);
+      const result = {
+        projectArea: projectArea[0],
+        projectAreaMinicategory: projectAreaMinicategory,
+        miniCategory: miniCategory,
+        milestone: milestone,
+        projectAreaMiniMiles: projectAreaMiniMiles,
+        prerequisite: prerequisite
+      }
+      callback(null, result);
+    }
+    // Project_MiniCategory_Area.findAll({
+    //   where: {
+    //     areaId: 1
+    //   },
+    //   include: [{
+    //     all: true
+    //   }]
+    // }).then(res1 => {
+    //   output = {
+    //     topdetials: res,
+    //     bottomdetails: res1
+    //   };
+    //   callback(null, output);
+    // }).catch(err => {
+    //   callback(err)
+    // });
+
 // const { Op } = require("sequelize");
 // exports.getSupProjectDetails = function(params, callback){
 //   Project_MiniCategory.findAll({
