@@ -288,3 +288,239 @@ exports.getSupProjectDetails = function (req, res) {
         res.send(result);
     })
 }
+
+exports.getAllProjectDetails = function (req, res) {
+    const getArea = userService.getAllProjectDetails(req.params, function (err, result) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getAllVendorProjectDetails = function (req, res) {
+    const getArea = userService.getAllVendorProjectDetails(req.params, function (err, result) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getVendorProjectDetails = function (req, res) {
+    const getArea = userService.getVendorProjectDetails(req.params, function (err, result) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+//All indedendent data tables
+
+exports.getUser = function (req, res) {
+    const getUser = userService.getUser(req.params, function (err, result) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getArea = function (req, res) {
+    const getArea = userService.getArea(req.params, function (err, result) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getMaterial = function (req, res) {
+    const getArea = userService.getMaterial(req.params, function (err, result) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getTutorial = function (req, res) {
+    const getArea = userService.getTutorial(req.params, function (err, result) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getTool = function (req, res) {
+    const getArea = userService.getTool(req.params, function (err, result) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getResource = function (req, res) {
+    const getArea = userService.getResource(req.params, function (err, result) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getProject = function (req, res) {
+    const getArea = userService.getProject(req.params, function (err, result) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getMiniCategory = function (req, res) {
+    const getArea = userService.getMiniCategory(req.params, function (err, result) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getPrerequisite = function (req, res) {
+    const getArea = userService.getPrerequisite(req.params, function (err, result) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getProjectPlan = function (req, res) {
+    const getArea = userService.getProjectPlan(req.params, function (err, result) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getProjectAreaPlan = function (req, res) {
+    const getArea = userService.getProjectAreaPlan(req.params, function (err, result) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getMilestone = function (req, res) {
+    const getArea = userService.getMilestone(req.params, function (err, result) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getAreaById = function (req, res) {
+    const getArea = userService.getAreaById(req.params, function (err, result) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getMaterialById = function (req, res) {
+    const getArea = userService.getMaterialById(req.params, function (err, result) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getTutorialById = function (req, res) {
+    const getArea = userService.getTutorialById(req.params, function (err, result) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getToolById = function (req, res) {
+    const getArea = userService.getToolById(req.params, function (err, result) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getResourceById = function (req, res) {
+    const getArea = userService.getResourceById(req.params, function (err, result) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getProjectById = function (req, res) {
+    const getArea = userService.getProjectById(req.params, function (err, result) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getMiniCategoryById = function (req, res) {
+    const getArea = userService.getMiniCategoryById(req.params, function (err, result) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getPrerequisiteById = function (req, res) {
+    const getArea = userService.getPrerequisiteById(req.params, function (err, result) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getProjectPlanById = function (req, res) {
+    const getArea = userService.getProjectPlanById(req.params, function (err, result) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getProjectAreaPlanById = function (req, res) {
+    const getArea = userService.getProjectAreaPlanById(req.params, function (err, result) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getMilestoneById = function (req, res) {
+    const getArea = userService.getMilestoneById(req.params, function (err, result) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+

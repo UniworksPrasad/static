@@ -68,12 +68,21 @@ exports.forgetPassword = function (req, res) {
     })
 }
 
+exports.confirmForgetPassword = function (req, res) {
+    let password = authService.ConfirmForgetPassword(req.body, function (err, result) {
+        if (err)
+            res.send(err);
+        res.send(result);
+    })
+}
+
 exports.changePassword = function (req, res) {
     let password = authService.ChangePassword(req.body, req.headers['authorization'], function (err, result) {
         if (err)
             res.send(err);
         res.send(result);
     })
+
 }
 
 exports.updateAttributes = function (req, res) {

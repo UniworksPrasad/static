@@ -15,6 +15,9 @@ const ProjectAreaPlan = require('../models/projectAreaPlan');
 const Vendor_Supervisor = require('../models/vendor_supervisor');
 const Project_MiniCategory = require('../models/project_miniCategory');
 const Project_MiniCategory_Area = require('../models/project_miniCategory_area');
+const ProjectAreaMiniMiles = require('../models/project_area_mini_mile');
+
+
 const {
   Op
 } = require("sequelize");
@@ -23,7 +26,9 @@ const ConstructVend_Category = require('../models/constructVend_category');
 const Project_Area = require('../models/project_area');
 const Project_Area_Mini_Mile = require('../models/project_area_mini_mile');
 const Project_Area_Minicategory = require('../models/project_area_minicategory');
-const { ElastiCache } = require('aws-sdk');
+const {
+  ElastiCache
+} = require('aws-sdk');
 
 exports.createUser = function (body, callback) {
   User.create({
@@ -70,11 +75,13 @@ exports.updateUser = function (params, body, callback) {
     user[0].aadharLink = body.aadharLink;
     user[0].GSTIN = body.GSTIN;
     user[0].save().then(result => {
-      if(body.role == "CSVD"){
-        Vendor_Supervisor.findAll({where:{
-          supervisorId: user[0].id
-        }}).then(entry => {
-          if(entry.length == 0){
+      if (body.role == "CSVD") {
+        Vendor_Supervisor.findAll({
+          where: {
+            supervisorId: user[0].id
+          }
+        }).then(entry => {
+          if (entry.length == 0) {
             Vendor_Supervisor.create({
               vendorId: user[0].id,
               supervisorId: user[0].id,
@@ -82,14 +89,13 @@ exports.updateUser = function (params, body, callback) {
             }).then(callback(null, result)).catch(err => {
               callback(err);
             });
-          }
-          else
+          } else
             callback(null, result);
         }).catch(err => {
           callback(err);
         })
-      }else
-      callback(null, result);
+      } else
+        callback(null, result);
     }).catch(err => {
       callback(err);
     });
@@ -400,21 +406,28 @@ exports.listUser = (body, callback) => {
 
 exports.listSubCategory = (body, callback) => {
   return SubCategory.findAll({
-      include: [{
-        model: Prerequisite,
-        as: "prerequisites",
-      }, {
-        model: Tutorial,
-        as: "tutorials"
-      }],
-    })
-    .then((tags) => {
-      return callback(tags);
-    })
-    .catch((err) => {
-      console.log(">> Error while retrieving Tags: ", err);
-      callback(err);
-    });
+    include: [{
+      model: Prerequisite,
+      as: "prerequisites",
+    }, {
+      model: Tutorial,
+      as: "tutorials"
+    }],
+  })
+}
+
+exports.createTutorial = function (body, callback) {
+  Tutorial.create({
+    topicName: body.topicName,
+    videoLink: body.videoLink,
+    description: body.description,
+    SubCategoryId: body.SubCategoryId,
+    thumbnail: body.thumbnail
+  }).then(result => {
+    callback(null, result);
+  }).catch(err => {
+    callback(err);
+  });
 };
 
 //All independent data tables
@@ -685,11 +698,306 @@ exports.getNotifications = function (params, callback) {
         callback(err);
       });
     })
+}
+//All indedendent data tables
+
+exports.getMaterial = (params, callback) => {
+  return Material.findAll()
+    .then((tags) => {
+      return callback(tags);
+    })
     .catch((err) => {
       console.log(">> Error while retrieving Tags: ", err);
       callback(err);
     });
-}
+};
+
+exports.getTutorial = (params, callback) => {
+  return Tutorial.findAll()
+    .then((tags) => {
+      return callback(tags);
+    })
+    .catch((err) => {
+      console.log(">> Error while retrieving Tags: ", err);
+      callback(err);
+    });
+};
+
+exports.getTool = (params, callback) => {
+  return Tool.findAll()
+    .then((tags) => {
+      return callback(tags);
+    })
+    .catch((err) => {
+      console.log(">> Error while retrieving Tags: ", err);
+      callback(err);
+    });
+};
+
+exports.getResource = (params, callback) => {
+  return Resource.findAll()
+    .then((tags) => {
+      return callback(tags);
+    })
+    .catch((err) => {
+      console.log(">> Error while retrieving Tags: ", err);
+      callback(err);
+    });
+};
+
+exports.getProject = (params, callback) => {
+  return Project.findAll()
+    .then((tags) => {
+      return callback(tags);
+    })
+    .catch((err) => {
+      console.log(">> Error while retrieving Tags: ", err);
+      callback(err);
+    });
+};
+
+exports.getMiniCategory = (params, callback) => {
+  return MiniCategory.findAll()
+    .then((tags) => {
+      return callback(tags);
+    })
+    .catch((err) => {
+      console.log(">> Error while retrieving Tags: ", err);
+      callback(err);
+    });
+};
+
+exports.getPrerequisite = (params, callback) => {
+  return Prerequisite.findAll()
+    .then((tags) => {
+      return callback(tags);
+    })
+    .catch((err) => {
+      console.log(">> Error while retrieving Tags: ", err);
+      callback(err);
+    });
+};
+
+exports.getProjectPlan = (params, callback) => {
+  return ProjectPlan.findAll()
+    .then((tags) => {
+      return callback(tags);
+    })
+    .catch((err) => {
+      console.log(">> Error while retrieving Tags: ", err);
+      callback(err);
+    });
+};
+
+exports.getProjectAreaPlan = (params, callback) => {
+  return ProjectAreaPlan.findAll()
+    .then((tags) => {
+      return callback(tags);
+    })
+    .catch((err) => {
+      console.log(">> Error while retrieving Tags: ", err);
+      callback(err);
+    });
+};
+
+exports.getMilestone = (params, callback) => {
+  return Milestone.findAll()
+    .then((tags) => {
+      return callback(tags);
+    })
+    .catch((err) => {
+      console.log(">> Error while retrieving Tags: ", err);
+      callback(err);
+    });
+};
+
+exports.getAreaById = (params, callback) => {
+  return Area.findAll({
+      where: {
+        id: params.id
+      },
+      include: [{
+        all: true,
+        attributes: ["description", "startDate", "endDate", "address", "zip", "lat", "long", "totalArea", "areaCompleted", "budget", "skilled", "semiSkilled", "unSkilled", "status"],
+      }],
+    })
+    .then((tags) => {
+      return callback(tags);
+    })
+    .catch((err) => {
+      console.log(">> Error while retrieving Tags: ", err);
+      callback(err);
+    });
+};
+// ,
+// include: [
+//   {
+//     model: Prerequisite,
+//     as: "prerequisites",
+//   }
+// ],
+exports.getMaterialById = (params, callback) => {
+  return Material.findAll({
+      where: {
+        id: params.id
+      }
+    })
+    .then((tags) => {
+      return callback(tags);
+    })
+    .catch((err) => {
+      console.log(">> Error while retrieving Tags: ", err);
+      callback(err);
+    });
+};
+
+exports.getTutorialById = (params, callback) => {
+  return Tutorial.findAll({
+      where: {
+        id: params.id
+      },
+      include: [{
+        all: true,
+        attributes: ["subcategoryName", "description"],
+      }],
+
+    })
+    .then((tags) => {
+      return callback(tags);
+    })
+    .catch((err) => {
+      console.log(">> Error while retrieving Tags: ", err);
+      callback(err);
+    });
+};
+
+exports.getToolById = (params, callback) => {
+  return Tool.findAll({
+      where: {
+        id: params.id
+      },
+      include: [{
+        all: true,
+        attributes: ["subcategoryName", "description"],
+      }],
+    })
+    .then((tags) => {
+      return callback(tags);
+    })
+    .catch((err) => {
+      console.log(">> Error while retrieving Tags: ", err);
+      callback(err);
+    });
+};
+
+exports.getResourceById = (params, callback) => {
+  return Resource.findAll({
+      where: {
+        id: params.id
+      }
+    })
+    .then((tags) => {
+      return callback(tags);
+    })
+    .catch((err) => {
+      console.log(">> Error while retrieving Tags: ", err);
+      callback(err);
+    });
+};
+
+exports.getProjectById = (params, callback) => {
+  return Project.findAll({
+      where: {
+        id: params.id
+      }
+    })
+    .then((tags) => {
+      return callback(tags);
+    })
+    .catch((err) => {
+      console.log(">> Error while retrieving Tags: ", err);
+      callback(err);
+    });
+};
+
+exports.getMiniCategoryById = (params, callback) => {
+  return MiniCategory.findAll({
+      where: {
+        id: params.id
+      }
+    })
+    .then((tags) => {
+      return callback(tags);
+    })
+    .catch((err) => {
+      console.log(">> Error while retrieving Tags: ", err);
+      callback(err);
+    });
+};
+
+exports.getPrerequisiteById = (params, callback) => {
+  return Prerequisite.findAll({
+      where: {
+        id: params.id
+      }
+    })
+    .then((tags) => {
+      return callback(tags);
+    })
+    .catch((err) => {
+      console.log(">> Error while retrieving Tags: ", err);
+      callback(err);
+    });
+};
+
+exports.getProjectPlanById = (params, callback) => {
+  return ProjectPlan.findAll({
+      where: {
+        id: params.id
+      }
+    })
+    .then((tags) => {
+      return callback(tags);
+    })
+    .catch((err) => {
+      console.log(">> Error while retrieving Tags: ", err);
+      callback(err);
+    });
+};
+
+exports.getProjectAreaPlanById = (params, callback) => {
+  return ProjectAreaPlan.findAll({
+      where: {
+        id: params.id
+      }
+    })
+    .then((tags) => {
+      return callback(tags);
+    })
+    .catch((err) => {
+      console.log(">> Error while retrieving Tags: ", err);
+      callback(err);
+    });
+};
+
+exports.getMilestoneById = (params, callback) => {
+  return Milestone.findAll({
+      where: {
+        id: params.id
+      },
+      include: [{
+        all: true,
+        // attributes: ["subcategoryName", "description"],
+      }],
+    })
+    .then((tags) => {
+      return callback(tags);
+    })
+    .catch((err) => {
+      console.log(">> Error while retrieving Tags: ", err);
+      callback(err);
+    });
+};
 
 exports.getSupProjectDetails = function (params, callback) {
   Project_MiniCategory.findAll({
@@ -724,6 +1032,114 @@ exports.getSupProjectDetails = function (params, callback) {
     callback(err)
   });
 }
+
+exports.getAllProjectDetails = async function (params, callback) {
+  const project = await Project.findAll({
+    where: {
+      id: params.projectId
+    }
+  });
+  const CategoryId = project[0].CategoryId;
+  const SubCategoryId = project[0].SubCategoryId;
+  const category = await Category.findAll({
+    where: {
+      id: CategoryId
+    }
+  });
+  const subCategory = await SubCategory.findAll({
+    where: {
+      id:SubCategoryId
+    }
+  });
+  
+      // console.log(miniCategory[0].miniCategoryName, milestone[0], projectAreaMiniMiles[0], prerequisite[0]);
+      const result = {
+        project: project[0],
+        category: category[0],
+        subCategory: subCategory[0],
+      }
+      callback(null, result);
+    }
+
+exports.getAllVendorProjectDetails = async function (params, callback) {
+  const projectArea = await Project_Area.findAll({
+    where: {
+      projectId: params.projectId
+    }
+  });
+      const result = {
+        projectArea: projectArea,
+      }
+      callback(null, result);
+    }
+
+
+exports.getVendorProjectDetails = async function (params, callback) {
+  const projectArea = await Project_Area.findAll({
+    where: {
+      projectId: params.projectId,
+      areaId: params.areaId
+    }
+  });
+  const projectAreaId = projectArea[0].id;
+  const projectAreaMinicategory = await Project_Area_Minicategory.findAll({
+    where: {
+      projectareaId: projectAreaId,
+      status : 'Process' 
+    }
+  });
+
+  const miniCategoryId = projectAreaMinicategory[0].minicategoryId;
+
+      const miniCategory = await MiniCategory.findAll({
+        where: {
+          id: miniCategoryId
+        }
+      });
+      const milestone = await Milestone.findAll({
+        where: {
+          MiniCategoryId: miniCategoryId
+        }
+      })
+      const projectAreaMiniMiles = await ProjectAreaMiniMiles.findAll({
+        where: {
+          projectareaminiId : projectAreaMinicategory[0].id,
+          milestoneId: milestone[0].id
+        }
+      })
+      const prerequisite = await Prerequisite.findAll({
+        where: {
+          SubCategoryId: miniCategory[0].SubCategoryId
+        }
+      })
+      console.log(miniCategory[0].miniCategoryName, milestone[0], projectAreaMiniMiles[0], prerequisite[0]);
+      const result = {
+        projectArea: projectArea[0],
+        projectAreaMinicategory: projectAreaMinicategory,
+        miniCategory: miniCategory,
+        milestone: milestone,
+        projectAreaMiniMiles: projectAreaMiniMiles,
+        prerequisite: prerequisite
+      }
+      callback(null, result);
+    }
+    // Project_MiniCategory_Area.findAll({
+    //   where: {
+    //     areaId: 1
+    //   },
+    //   include: [{
+    //     all: true
+    //   }]
+    // }).then(res1 => {
+    //   output = {
+    //     topdetials: res,
+    //     bottomdetails: res1
+    //   };
+    //   callback(null, output);
+    // }).catch(err => {
+    //   callback(err)
+    // });
+
 // const { Op } = require("sequelize");
 // exports.getSupProjectDetails = function(params, callback){
 //   Project_MiniCategory.findAll({

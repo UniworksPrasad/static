@@ -31,10 +31,9 @@ exports.Register = function (body, callback) {
             callback(err);
         else {
             User.create({
-                contact: body.Username,
-                status: "NOT CONFIRMED",
-                name: body.name,
-                userName: body.userName
+                userName: body.Username,
+                contact: body.Phone_number,
+                status: "NOT CONFIRMED"
             }).then(result => {
                 callback(null, result);
             }).catch(err => {
@@ -76,10 +75,9 @@ exports.ConfirmSignUp = function (body, callback) {
                     var accesstoken = result.getAccessToken().getJwtToken();
                     User.findAll({
                         where: {
-                            contact: body.Username
+                            userName: body.Username
                         }
                     }).then(users => {
-                        console.log(users);
                         users[0].status = "CONFIRMED";
                         users[0].save().then(result => {
                             callback(null, accesstoken);
@@ -89,6 +87,7 @@ exports.ConfirmSignUp = function (body, callback) {
                     }).catch(err => {
                         callback(err);
                     });
+
                 },
                 onFailure: (function (err) {
                     callback(err);
@@ -265,6 +264,33 @@ exports.ForgetPassword = function (body, callback) {
         } // successful response
     });
 };
+
+exports.ConfirmForgetPassword = function (body, callback) {
+    var params = {
+        ClientId: poolData.ClientId,
+        /* required */
+        Username: body.Username,
+        /* required */
+        ConfirmationCode: body.ConfirmationCode,
+        /* required */
+        Password: body.Password,
+        /* required */
+    };
+    var cognitoidentityserviceprovider = new AWS.CognitoIdentityServiceProvider({
+        region: pool_region
+    });
+    cognitoidentityserviceprovider.confirmForgotPassword(params, function (err, data) {
+        if (err) {
+            console.log(err, err.stack);
+            callback(err);
+        } // an error occurred
+        else {
+            console.log(data);
+            callback(null, data);
+        } // successful response
+    });
+};
+
 
 exports.ChangePassword = function (body, token, callback) {
     var params = {
