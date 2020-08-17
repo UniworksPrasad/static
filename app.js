@@ -34,6 +34,11 @@ const Vendor_Supervisor = require('./models/vendor_supervisor');
 const Project_Area = require('./models/project_area');
 const Project_Area_Minicategory = require('./models/project_area_minicategory');
 const Project_Area_Mini_Mile = require('./models/project_area_mini_mile');
+const BOQ = require('./models/BOQ');
+const BOM = require('./models/BOM');
+const GanttChart = require('./models/GanttChart');
+const Order = require('./models/order');
+const Order_Detail = require('./models/order_detail');
 
 connection
   .authenticate()
@@ -182,6 +187,27 @@ Project.hasMany(ProjectPlan, {
 });
 ProjectPlan.belongsTo(Project);
 
+Project.hasMany(BOQ, {
+  as: "boq"
+}, {
+  onDelete: 'cascade'
+});
+BOQ.belongsTo(Project);
+
+Project.hasMany(BOM, {
+  as: "bom"
+}, {
+  onDelete: 'cascade'
+});
+BOM.belongsTo(Project);
+
+Project.hasMany(GanttChart, {
+  as: "ganttchart"
+}, {
+  onDelete: 'cascade'
+});
+GanttChart.belongsTo(Project);
+
 Project.belongsToMany(MiniCategory, {
   through: Project_MiniCategory,
   as: 'projectminicategories',
@@ -203,6 +229,24 @@ Project.belongsTo(Category);
 
 SubCategory.hasOne(Project);
 Project.belongsTo(SubCategory);
+
+Order.hasOne(Project);
+Project.belongsTo(Order);
+
+Order.belongsToMany(Material, {
+  through: Order_Detail,
+  as: 'materials',
+  foreignKey: "orderId"
+}, {
+  onDelete: 'cascade'
+});
+Material.belongsToMany(Order, {
+  through: Order_Detail,
+  as: 'orders',
+  foreignKey: "materialId"
+}, {
+  onDelete: 'cascade'
+});
 //Project.belongsTo(SubCategory, { as: 'subcategory' });
 
 Project.belongsToMany(User, {
@@ -294,11 +338,11 @@ Milestone.belongsToMany(Project_Area_Minicategory, {
   onDelete: 'cascade'
 });
 
-// connection.sync({force: false}).then(result=>{
-//     console.log("Database synched successfully!!!");
-// }).catch(err=>{
-//     console.log(err);
-// });
+connection.sync({force: true}).then(result=>{
+    console.log("Database synched successfully!!!");
+}).catch(err=>{
+    console.log(err);
+});
 
 app.use(bodyParser.urlencoded({
   extended: false
