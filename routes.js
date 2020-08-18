@@ -234,6 +234,7 @@ router.get('/milestone/:id', userController.getMilestoneById);
 ///siteRequest/:projectId
 router.get('/siteRequest/:projectId', userController.getSiteRequest);
 router.get('/notifications/:userId', userController.getNotifications);
+router.get('/supervisor/notifications/:userId', userController.getSupervisorNotifications);
 
 router.get('/vendor/hello')
 router.get('/supervisor/hello')
