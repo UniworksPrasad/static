@@ -338,11 +338,11 @@ Milestone.belongsToMany(Project_Area_Minicategory, {
   onDelete: 'cascade'
 });
 
-connection.sync({force: true}).then(result=>{
-    console.log("Database synched successfully!!!");
-}).catch(err=>{
-    console.log(err);
-});
+// connection.sync({force: true}).then(result=>{
+//     console.log("Database synched successfully!!!");
+// }).catch(err=>{
+//     console.log(err);
+// });
 
 app.use(bodyParser.urlencoded({
   extended: false

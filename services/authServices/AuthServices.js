@@ -18,22 +18,18 @@ const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
 
 exports.Register = function (body, callback) {
     var username = body.Username;
-    var phone_number = body.Phone_number;
     var password = body.Password;
     var attributeList = [];
 
-    attributeList.push(new AmazonCognitoIdentity.CognitoUserAttribute({
-        Name: "phone_number",
-        Value: phone_number
-    }));
     userPool.signUp(username, password, attributeList, null, function (err, result) {
         if (err)
             callback(err);
         else {
             User.create({
-                userName: body.Username,
-                contact: body.Phone_number,
-                status: "NOT CONFIRMED"
+                contact: body.Username,
+                status: "NOT CONFIRMED",
+                name: body.name,
+                userName: body.userName
             }).then(result => {
                 callback(null, result);
             }).catch(err => {
@@ -75,7 +71,7 @@ exports.ConfirmSignUp = function (body, callback) {
                     var accesstoken = result.getAccessToken().getJwtToken();
                     User.findAll({
                         where: {
-                            userName: body.Username
+                            contact: body.Username
                         }
                     }).then(users => {
                         users[0].status = "CONFIRMED";
