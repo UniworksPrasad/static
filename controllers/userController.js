@@ -524,3 +524,11 @@ exports.getMilestoneById = function (req, res) {
     })
 }
 
+exports.getSupervisorNotifications = function (req, res) {
+    const createUser = userService.getSupervisorNotifications(req.params, function (err, result) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(result);
+    })
+}

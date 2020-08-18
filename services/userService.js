@@ -623,6 +623,35 @@ exports.getSiteRequest = function (params, callback) {
     });
 }
 
+//getSupervisorNotifications
+
+exports.getSupervisorNotifications = function (params, callback) {
+  Project_User.findAll({
+    where: {
+      id: params.userId
+    }
+  }).then(projects => {
+    var projectIdArray = [];
+    projects.forEach(element => {
+      projectIdArray.push(element.projectId);
+    });
+    console.log(projectIdArray);
+    Project.findAll({
+      where: {
+        id: projectIdArray,
+        [Op.not]: {
+          status: "F"
+        }
+      }
+    }).then(projects => {
+      callback(null, projects);
+    }).catch(err => {
+      callback(err)
+    });
+  }).catch(err => callback(err));
+}
+
+
 exports.getNotifications = function (params, callback) {
   var users = [];
   class notification {
