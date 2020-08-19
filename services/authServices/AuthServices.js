@@ -119,10 +119,12 @@ exports.Login = function (body, callback) {
     cognitoUser.authenticateUser(authenticationDetails, {
         onSuccess: function (result) {
             var accesstoken = result.getAccessToken().getJwtToken();
+            console.log(accesstoken);
             User.findAll({where: {
                 contact: body.Username
             }}).then(users => {
                 role = users[0].role;
+                console.log(role);
                 callback(null, new token(accesstoken, role));
             }).catch(err => {callback(err)});
         },
