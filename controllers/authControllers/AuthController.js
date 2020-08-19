@@ -31,7 +31,9 @@ exports.login = function (req, res) {
     let login = authService.Login(req.body, function (err, result) {
         if (err)
             res.send(err)
+        console.log(result);
         res.send(result);
+        //login
     })
 }
 
