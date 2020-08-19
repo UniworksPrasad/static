@@ -18,18 +18,23 @@ const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
 
 exports.Register = function (body, callback) {
     var username = body.Username;
+    var phone_number = body.Phone_number;
     var password = body.Password;
     var attributeList = [];
 
-    userPool.signUp(username, password, attributeList, null, function (err, result) {
+    // attributeList.push(new AmazonCognitoIdentity.CognitoUserAttribute({
+    //     Name: "phone_number",
+    //     Value: phone_number
+    // }));
+    userPool.signUp(username, password, null, null, function (err, result) {
         if (err)
             callback(err);
         else {
             User.create({
                 contact: body.Username,
+                userName: body.userName,
                 status: "NOT CONFIRMED",
-                name: body.name,
-                userName: body.userName
+                name: body.name
             }).then(result => {
                 callback(null, result);
             }).catch(err => {
@@ -105,10 +110,21 @@ exports.Login = function (body, callback) {
         Pool: userPool
     }
     var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+    class token {
+        constructor(accessToken, role) {
+          this.accessToken = accessToken;
+          this.role = role;
+        }
+      };
     cognitoUser.authenticateUser(authenticationDetails, {
         onSuccess: function (result) {
             var accesstoken = result.getAccessToken().getJwtToken();
-            callback(null, accesstoken);
+            User.findAll({where: {
+                contact: body.Username
+            }}).then(users => {
+                role = users[0].role;
+                callback(null, new token(accesstoken, role));
+            }).catch(err => {callback(err)});
         },
         onFailure: (function (err) {
             callback(err);

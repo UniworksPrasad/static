@@ -1,6 +1,7 @@
 var authService = require('../../services/authServices/AuthServices');
 
 exports.register = function (req, res) {
+    console.log("In the controller");
     let register = authService.Register(req.body, function (err, result) {
         if (err)
             res.send(err);
@@ -29,10 +30,8 @@ exports.listUsers = function (req, res) {
 exports.login = function (req, res) {
     let login = authService.Login(req.body, function (err, result) {
         if (err)
-            res.send(err);
-        res.status(200).json({
-            accessToken: result
-        });
+            res.send(err)
+        res.send(result);
     })
 }
 
