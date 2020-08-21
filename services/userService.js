@@ -1085,11 +1085,11 @@ exports.getVendorProjectDetails = async function (params, callback) {
   const projectAreaMinicategory = await Project_Area_Minicategory.findAll({
     where: {
       projectareaId: projectAreaId,
-      status : 'Process' 
     }
   });
-
-  const miniCategoryId = projectAreaMinicategory[0].minicategoryId;
+  const inProgressMiniCategory = await projectAreaMinicategory.find( i => i.status === 'P');
+  console.log(inProgressMiniCategory.dataValues.minicategoryId)
+  const miniCategoryId =  inProgressMiniCategory.dataValues.minicategoryId;
 
       const miniCategory = await MiniCategory.findAll({
         where: {
@@ -1112,10 +1112,9 @@ exports.getVendorProjectDetails = async function (params, callback) {
           SubCategoryId: miniCategory[0].SubCategoryId
         }
       })
-      console.log(miniCategory[0].miniCategoryName, milestone[0], projectAreaMiniMiles[0], prerequisite[0]);
       const result = {
         projectArea: projectArea[0],
-        projectAreaMinicategory: projectAreaMinicategory,
+        projectAreaMinicategory: inProgressMiniCategory.dataValues,
         miniCategory: miniCategory,
         milestone: milestone,
         projectAreaMiniMiles: projectAreaMiniMiles,
