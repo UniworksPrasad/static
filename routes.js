@@ -44,7 +44,6 @@ const upload = multer({
 
 router.post('/auth/register', [
     check('Username').notEmpty().withMessage('Username is required'),
-    check('Phone_number').notEmpty().isNumeric().withMessage('Phone_number is required'),
     check('Password').notEmpty().withMessage('Password is required'),
 ], validate, authController.register);
 router.post('/auth/login', [
