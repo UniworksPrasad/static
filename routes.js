@@ -115,7 +115,8 @@ router.put('/category/:id', userController.updateCategory);
 router.post('/vendor/addcategory', userController.addCategoryToVendor);
 router.delete('/removecategory', userController.removeCategory);
 router.get('/category', userController.listCategory);
-router.get('/vendor/:contact', userController.getVendor);
+router.get('/vendor/:contact', userController.getVendorHome);
+router.get('/supervisor/:contact', userController.getSupervisorHome);
 //router.get('/vendor/:contact', authMiddleware.Validate, userController.getVendor);
 router.post('/subcategory', userController.createSubCategory);
 router.get('/subcategory', userController.listSubCategory);
@@ -174,6 +175,7 @@ router.post('/project',[
 ], validate, userController.createProject);
 
 router.get('/project/:id', userController.getProject);
+router.put('/project/:id', userController.updateProject);
 
 router.post('/minicategory',[ 
     check('miniCategoryName').notEmpty().withMessage('miniCategoryName is required'),
