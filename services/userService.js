@@ -117,7 +117,92 @@ exports.updateCategory = function (params, body, callback) {
   });
 }
 
-exports.getVendor = function (params, callback) {
+exports.getSupervisorHome = function (params, callback) {
+  class SupervisorDetails {
+    constructor(supervisor, categorydetails) {
+      this.supervisor = supervisor;
+      this.categorydetails = categorydetails;
+    }
+  };
+
+  User.findAll({
+      where: {
+        contact: params.contact
+      }
+    })
+    .then((user) => {
+      console.log(user);
+      Vendor_Supervisor.findAll({
+        where: {
+          supervisorId : user[0].id
+        }
+      }).then(pair => {
+        console.log(pair.vendorId);
+        User.findAll({
+          where: {
+            id: pair.vendorId
+          }
+        })
+        .then((user) => {
+          console.log(user);
+          ConstructVend_Category.findAll({
+            where: {
+              userId: user[0].id
+            }
+          }).then(results => {
+            var array = [];
+            results.forEach(element => {
+              array.push(element.categoryId);
+            });
+            console.group(array);
+            Category.findAll({
+              where: {
+                id: array
+              },
+              include: [{
+                model: SubCategory,
+                as: "subcategories",
+                include: [{
+                    model: Tutorial,
+                    as: "tutorials"
+                  },
+                  {
+                    model: Prerequisite,
+                    as: "prerequisites"
+                  }
+                ]
+              }]
+            }).then(output => {
+              User.findAll({
+                where : {
+                  contact: params.contact
+                }
+              }).then(finalusers => {
+                callback(null, new SupervisorDetails(finalusers[0], output))
+              }).catch();
+            }).catch(err => {
+              callback(err)
+            });
+          }).catch(err => {
+            callback(err)
+          });
+        })
+        .catch((err) => {
+          console.log(">> Error while retrieving Tutorials: ", err);
+          return callback(err);
+        });
+      }
+        
+      ).catch(err => callback(err));
+      
+    })
+    .catch((err) => {
+      console.log(">> Error while retrieving Tutorials: ", err);
+      return callback(err);
+    });
+}
+
+exports.getVendorHome = function (params, callback) {
   class Vendordetails {
     constructor(vendor, categorydetails) {
       this.vendor = vendor;
@@ -501,6 +586,39 @@ exports.createResource = function (body, callback) {
     callback(err);
   })
 }
+
+////////////////////////////////////////////////////////////
+exports.updateProject = function(params, body, callback){
+  Project.update(
+    {
+      bookingId: body.bookingId,
+    description: body.description,
+    startDate: body.startDate,
+    endDate: body.endDate,
+    address: body.address,
+    zip: body.zip,
+    lat: body.lat,
+    long: body.long,
+    totalArea: body.totalArea,
+    areaCompleted: body.areaCompleted,
+    budget: body.budget,
+    skilled: body.skilled,
+    semiSkilled: body.semiSkilled,
+    unSkilled: body.unSkilled,
+    status: body.status,
+    CategoryId: body.CategoryId,
+    SubCategoryId: body.SubCategoryId,
+    },
+    { where: { id: params.id } }
+  )
+    .then(result =>
+      callback(null, result)
+    )
+    .catch(err =>
+      callback(err)
+    )
+}
+
 
 exports.createProject = function (body, callback) {
   Project.create({

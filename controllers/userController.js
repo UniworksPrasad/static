@@ -36,8 +36,17 @@ exports.updateCategory = function (req, res) {
     })
 }
 
-exports.getVendor = function (req, res) {
-    const getUser = userService.getVendor(req.params, function (err, result) {
+exports.getVendorHome = function (req, res) {
+    const getUser = userService.getVendorHome(req.params, function (err, result) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
+exports.getSupervisorHome = function (req, res) {
+    const getUser = userService.getSupervisorHome(req.params, function (err, result) {
         if (err) {
             res.send(err);
         }
@@ -207,6 +216,16 @@ exports.createProject = function (req, res) {
         res.send(result);
     })
 }
+
+exports.updateProject = function (req, res) {
+    const createUser = userService.updateProject(req.params, req.body, function (err, result) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(result);
+    })
+}
+
 
 exports.getProject = function (req, res) {
     const createUser = userService.getProject(req.params, function (err, result) {
