@@ -741,6 +741,56 @@ exports.getSiteRequest = function (params, callback) {
     });
 }
 
+exports.getProjectsForSiteEngineer = function (params, callback) {
+  Project_User.findAll({
+    where: {
+      userId: params.userId
+    }
+  }).then(projects => {
+    var projectIdArray = [];
+    projects.forEach(element => {
+      projectIdArray.push(element.projectId);
+    });
+    console.log(projectIdArray);
+    Project.findAll({
+      where: {
+        id: projectIdArray,
+        [Op.not]: {
+          status: "F"
+        }
+      }
+    }).then(projects => {
+      callback(null, projects);
+    }).catch(err => {
+      callback(err)
+    });
+  }).catch(err => callback(err));
+}
+
+exports.getUsersForSiteEngineer = function (params, callback) {
+  Project_User.findAll({
+    where: {
+      projectId: params.projectId
+    }
+  }).then(projects => {
+    var userIdArray = [];
+    projects.forEach(element => {
+      userIdArray.push(element.userId);
+    });
+    console.log(userIdArray);
+    User.findAll({
+      where: {
+        id: userIdArray,
+        role: 'CSVD'
+      }
+    }).then(users => {
+      callback(null, users);
+    }).catch(err => {
+      callback(err)
+    });
+  }).catch(err => callback(err));
+}
+
 //getSupervisorNotifications
 
 exports.getSupervisorNotifications = function (params, callback) {
